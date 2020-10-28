@@ -4,7 +4,9 @@ import axios from 'axios';
 
 export default axios.create({
 	baseURL: `https://mmsoftware100.com/se2020`,
-	timeout: 30000
+	timeout: 3000,
+	headers: {
+		'Content-Type': 'application/x-www-form-urlencoded',
+		Accept: 'application/json'
+	}
 });
-
-

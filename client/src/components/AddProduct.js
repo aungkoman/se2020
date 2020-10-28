@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import styled from 'styled-components';
 import { TextField, Button } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
-import styled from 'styled-components';
 import { productAdd } from '../redux/action/productAdd';
+import { productList } from '../redux/action/productList';
 const InputContainer = styled.div`
 	margin-top: 5px;
 	padding: 20px 20px;
@@ -41,6 +42,7 @@ const AddProduct = () => {
 		if (!valid()) return false;
 		let name = productName;
 		dispatch(productAdd({ name }));
+		dispatch(productList());
 	};
 
 	return (

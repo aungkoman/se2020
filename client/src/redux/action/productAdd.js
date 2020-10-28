@@ -1,4 +1,5 @@
 import axios from '../../api/axiosCreate';
+import qs from 'qs';
 export const productAddStart = () => {
 	return {
 		type: 'PRODUCT_ADD_START'
@@ -18,13 +19,16 @@ export const productAddError = (err) => {
 };
 
 export const productAdd = ({ name }) => {
-	const ops_type = 'insert';
-	console.log(name);
+	const data = qs.stringify({
+		ops_type: 'insert',
+		name: name
+	});
 	// Return promise with success and failure actions
 	return async (dispatch) => {
 		dispatch(productAddStart());
 		try {
-			const res = await axios.post('/api/v1/product/', { ops_type, name });
+			const res = await axios.post('/api/v1/product/', data);
+			console.log(res);
 			if (res && res.data) {
 				dispatch(productAddSuccess(res.data));
 			} else {
