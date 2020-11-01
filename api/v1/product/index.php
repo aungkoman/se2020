@@ -13,6 +13,7 @@ include('../../../model/v1/PRODUCT.php'); // product Model
 $product = new PRODUCT(); // create new product object
 $method = $_SERVER['REQUEST_METHOD']; // get request method
 // middleware_super_user($_POST); // middleware usage 
+/* hello world */
 switch ($method) {
 	case 'POST':
         $request_data = $_POST;
