@@ -34,6 +34,7 @@ switch ($method) {
                 break;
             case 'update':
                 middleware_admin($request_data);
+                uploadImageUpdate($request_data);
                 $product->update($request_data);
                 break;
             case 'delete':
