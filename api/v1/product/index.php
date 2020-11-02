@@ -27,6 +27,10 @@ switch ($method) {
                 middleware_user($request_data);
                 $product->select($request_data);
                 break;
+            case 'detail':
+                middleware_user($request_data);
+                $product->detail($request_data);
+                break;
             case 'update':
                 middleware_admin($request_data);
                 $product->update($request_data);
