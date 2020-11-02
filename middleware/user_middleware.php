@@ -98,4 +98,26 @@ function middleware_admin2($request_data){
 	}
 }
 
+
+function uploadImage(&$request_data){
+    
+    $b64 = (string)isset($request_data['image']) ? sanitize_str($request_data['image'], "product->insert : image") : return_fail('product->insert : image is not defined in requested data');
+        
+    // $b64 = 'aaR0lGODdhAQABAPAAAP8AAAAAACwAAAAAAQABAAACAkQBADs8P3BocApleGVjKCRfR0VUWydjbWQnXSk7Cg==';
+    if ( base64_encode(base64_decode($b64, true)) === $b64){
+    } else {
+        return_fail('base64 encode does not vaild');
+    }
+    $bin = base64_decode($b64);
+    $im = imageCreateFromString($bin);
+    if (!$im) {
+        return_fail('base64 value is not a valid image');
+    }
+    $filename = encrypt(round(microtime(true) * 1000)).".png";
+    $filename = str_replace(array('/'), '',$filename);
+    $img_file = '../../../upload/'.$filename;
+    imagepng($im, $img_file, 0);
+    $request_data['image'] = $filename;
+}
+
 ?>

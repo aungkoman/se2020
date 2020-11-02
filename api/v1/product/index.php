@@ -21,6 +21,7 @@ switch ($method) {
         switch ($ops_type){
             case 'insert':
                 middleware_admin($request_data);
+                uploadImage($request_data);
                 $product->insert($request_data);
                 break;
             case 'select':
