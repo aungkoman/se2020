@@ -19,30 +19,33 @@ switch ($method) {
         $request_data = $_POST;
         $ops_type = (string) isset($request_data['ops_type']) ? sanitize_str($request_data['ops_type'],"product->ops_type") :  return_fail('product->ops_type : ops_type is not defined in requested data'); // ops_type sanitize string
         switch ($ops_type){
+            case 'login':
+                middleware_login($request_data);
+                break;
             case 'insert':
-                middleware_admin($request_data);
+                middleware_jwt($request_data);
                 uploadImage($request_data);
                 $product->insert($request_data);
                 break;
             case 'select':
-                middleware_user($request_data);
+                middleware_jwt($request_data);
                 $product->select($request_data);
                 break;
             case 'detail':
-                middleware_user($request_data);
+                middleware_jwt($request_data);
                 $product->detail($request_data);
                 break;
             case 'update':
-                middleware_admin($request_data);
+                middleware_jwt($request_data);
                 uploadImageUpdate($request_data);
                 $product->update($request_data);
                 break;
             case 'delete':
-                middleware_admin($request_data);
+                middleware_jwt($request_data);
                 $product->delete($request_data);
                 break;
             case 'delete_multiple':
-                middleware_admin($request_data);
+                middleware_jwt($request_data);
                 $product->delete_multiple($request_data);
                 break;
             default :

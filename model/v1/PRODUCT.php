@@ -39,7 +39,6 @@ class PRODUCT {
         $search = (string) isset($data['search']) ? sanitize_str($data['search'], "product->select : search string sanitize") : "";
         $limit = (int) isset($data['limit']) ? sanitize_int($data['limit'], "product->select : limit int sanitize") : 0;
         if($search != ""){
-            echo "search is ".$search;
             if ($limit == 0) $products = R::find('product', ' name LIKE ?', ["%".$search."%"]);
             else $products = R::find('product', ' name LIKE ? LIMIT ?', ["%".$search."%",$limit]);
         }
