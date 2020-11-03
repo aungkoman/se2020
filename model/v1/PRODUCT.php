@@ -65,7 +65,7 @@ class PRODUCT {
         $product = R::load('product', $id);
         if ($product->id == 0) return_fail("product->update : no data for requested id ".$encrypt_id);
         $product->name = (string)isset($data['name']) ? sanitize_str($data['name'], "product->update : name") : $product->name;
-        $product->description = (string)isset($data['description']) ? sanitize_str($data['name'], "product->update : description") : $product->description;
+        $product->description = (string)isset($data['description']) ? sanitize_str($data['description'], "product->update : description") : $product->description;
         $product->image = (string)isset($data['image']) ? sanitize_str($data['image'], "product->update : image") : $product->image;
         $product->size = (int)isset($data['size']) ? sanitize_int($data['size'], "product->update : size") : $product->size;
         $product->color = (int)isset($data['color']) ? sanitize_int($data['color'], "product->update : color") : $product->color;
