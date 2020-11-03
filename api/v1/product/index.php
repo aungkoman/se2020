@@ -41,6 +41,10 @@ switch ($method) {
                 middleware_admin($request_data);
                 $product->delete($request_data);
                 break;
+            case 'delete_multiple':
+                middleware_admin($request_data);
+                $product->delete_multiple($request_data);
+                break;
             default :
                 return_fail('product : unknow_ops_type',$ops_type);
                 break;

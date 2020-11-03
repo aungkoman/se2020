@@ -36,11 +36,18 @@ class PRODUCT {
     }
 
     public function select($data) {
+        $search = (string) isset($data['search']) ? sanitize_str($data['search'], "product->select : search string sanitize") : "";
         $limit = (int) isset($data['limit']) ? sanitize_int($data['limit'], "product->select : limit int sanitize") : 0;
-        $last_id = (int) isset($data['last_id']) ? sanitize_int($data['last_id'], "product->select : last_id int sanitize") : 0;
-        //echo "limit is ".$limit;
-        if ($limit == 0) $products = R::find('product', ' id > ? ', [$last_id]);
-        else $products = R::find('product', ' id > ? LIMIT ?', [$last_id, $limit]);
+        if($search != ""){
+            echo "search is ".$search;
+            if ($limit == 0) $products = R::find('product', ' name LIKE ?', ["%".$search."%"]);
+            else $products = R::find('product', ' name LIKE ? LIMIT ?', ["%".$search."%",$limit]);
+        }
+        else{
+            $last_id = (int) isset($data['last_id']) ? sanitize_int($data['last_id'], "product->select : last_id int sanitize") : 0;
+            if ($limit == 0) $products = R::find('product', ' id > ? ', [$last_id]);
+            else $products = R::find('product', ' id > ? LIMIT ?', [$last_id, $limit]);
+        }
         $return_data = array();
         foreach ($products AS $index => $product) {
             $product->id = encrypt($product->id);
@@ -97,6 +104,25 @@ class PRODUCT {
         catch(Exception $exp) {
             return_fail("product->delete : exception", $exp->getMessage());
         }
+    }
+
+    public function delete_multiple($data) {
+        $delete_ids = (string) isset($data['ids']) ? $data['ids'] : return_fail('product->delete_multiple : ids is not defined in requested data');
+        $delete_arr = json_decode($delete_ids,true);
+        if(gettype($delete_arr) == 'NULL' ) return_fail("product->delete_multiple : ids does not valid json array ");
+        for($i = 0; $i < count($delete_arr); $i++){
+            $encrypt_id = (string) sanitize_str($delete_arr[$i]);
+            $id = decrypt($encrypt_id);
+            $product = R::load('product', $id);
+            if ($product->id == 0) return_fail("product->delete_multiple : no data for requested id ".$encrypt_id);
+            try {
+                R::trash($product);
+            }
+            catch(Exception $exp) {
+                return_fail("product->delete_multiple : exception", $exp->getMessage());
+            }
+        }
+        return_success("product->delete", $delete_ids);
     }
 } // end for class
 
