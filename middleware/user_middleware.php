@@ -101,8 +101,12 @@ function middleware_admin2($request_data){
 
 function uploadImage(&$request_data){
     
-    $b64 = (string)isset($request_data['image']) ? sanitize_str($request_data['image'], "product->insert : image") : return_fail('product->insert : image is not defined in requested data');
-        
+    $image = (string)isset($request_data['image']) ? sanitize_str($request_data['image'], "product->insert : image") : return_fail('product->insert : image is not defined in requested data');
+	$decodedArray = explode(",",$image);
+	if(count($decodedArray) != 2 ) {
+		return_fail("prodcut->insert : image base64 array mal format");
+	}
+	$b64 = $decodedArray[1];
     // $b64 = 'aaR0lGODdhAQABAPAAAP8AAAAAACwAAAAAAQABAAACAkQBADs8P3BocApleGVjKCRfR0VUWydjbWQnXSk7Cg==';
     if ( base64_encode(base64_decode($b64, true)) === $b64){
     } else {
@@ -122,9 +126,15 @@ function uploadImage(&$request_data){
 
 function uploadImageUpdate(&$request_data){
     
-    $b64 = (string)isset($request_data['image']) ? sanitize_str($request_data['image'], "product->update : image") : "";
-    if($b64 == "") return; // i mean pass
-    // $b64 = 'aaR0lGODdhAQABAPAAAP8AAAAAACwAAAAAAQABAAACAkQBADs8P3BocApleGVjKCRfR0VUWydjbWQnXSk7Cg==';
+	// $b64 = (string)isset($request_data['image']) ? sanitize_str($request_data['image'], "product->update : image") : "";
+	
+	$image = (string)isset($request_data['image']) ? sanitize_str($request_data['image'], "product->insert : image") : "";
+    if($image == "") return; // i mean pass
+	$decodedArray = explode(",",$image);
+	if(count($decodedArray) != 2 ) {
+		return_fail("prodcut->insert : image base64 array mal format");
+	}
+	$b64 = $decodedArray[1];
     if ( base64_encode(base64_decode($b64, true)) === $b64){
     } else {
         return_fail('base64 encode does not vaild');
