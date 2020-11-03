@@ -1,5 +1,6 @@
 import axios from '../../api/axiosCreate';
 import qs from 'qs';
+import { getCookie } from '../../utils/cookie';
 export const productAddStart = () => {
 	return {
 		type: 'PRODUCT_ADD_START'
@@ -18,10 +19,20 @@ export const productAddError = (err) => {
 	};
 };
 
-export const productAdd = ({ name }) => {
+export const productAdd = ({ name, description, image, size, color, price, stock, warehouse, category }) => {
+	const token = getCookie('token');
 	const data = qs.stringify({
 		ops_type: 'insert',
-		name: name
+		jwt: token,
+		name: name,
+		description: description,
+		image: image,
+		size: size,
+		color: color,
+		price: price,
+		stock: stock,
+		warehouse: warehouse,
+		category: category
 	});
 	// Return promise with success and failure actions
 	return async (dispatch) => {
