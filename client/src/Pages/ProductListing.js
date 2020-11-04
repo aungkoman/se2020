@@ -8,7 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import IconButton from '@material-ui/core/IconButton';
-import { Button } from '@material-ui/core';
+import { Button, Tooltip } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import { Link, useHistory } from 'react-router-dom';
 import { isEmpty } from 'lodash';
@@ -47,17 +47,16 @@ const ButtonWrapper = styled.div`
 `;
 const ButtonStyled = styled(Button)`
 	border-radius: 10px !important ;
-	border: 1px solid green !important;
 	background-color: transparent !important;
 	min-height: 30px !important;
 	min-width: 70px !important;
 	color: black !important;
 	height: 38px !important;
-	border-color: green !important;
 	align-items: center !important;
+	background-color: #1da0ff !important;
 	&:hover {
 		opacity: 3;
-		background-color: cadetblue !important;
+		color: white !important;
 		cursor: ${({ valid }) => valid && `no-drop !important`};
 	}
 `;
@@ -93,21 +92,20 @@ const ProductListing = () => {
 	const handleAddProduct = () => history.push('/add-product');
 	return (
 		<ContainerWrapper>
-			{/* <Header>ADD PRODUCT</Header>
-    <AddProduct /> */}
 			<Header>
 				<ImageContainer>
 					<Image src={process.env.PUBLIC_URL + '/logo.png'} />
-					{/* <Header>ADD PRODUCT</Header> */}
 				</ImageContainer>
 			</Header>
 			<HeaderWrapper>
 				<Avatar>A</Avatar>
 				<SearchWrapper>
 					<SearchInput placeholder="Search Here" value={search} onChange={handleSearchChange} />
-					<IconButton onClick={handleSearch}>
-						<FontAwesomeIcon icon={faSearch} />
-					</IconButton>
+					<Tooltip title="Product Search">
+						<IconButton onClick={handleSearch}>
+							<FontAwesomeIcon icon={faSearch} />
+						</IconButton>
+					</Tooltip>
 				</SearchWrapper>
 				<ButtonWrapper>
 					<ButtonStyled onClick={handleAddProduct}> ADD PRODUCT </ButtonStyled>

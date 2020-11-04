@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 // For Wrapper the ALl Components
 const ContainerWrapper = styled.div`
-	max-width: 1080px;
+	max-width: 1220px;
 	margin: auto;
 	height: auto;
 	width: 100%;

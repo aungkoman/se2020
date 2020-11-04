@@ -19,6 +19,7 @@ import { BASE_URL } from '../utils/baseURL';
 import { useHistory } from 'react-router-dom';
 import { Size, Color, Warehouse, Category } from '../utils/data';
 import AlertBox from './AlertBox';
+import ImageModal from './ImageModal';
 
 const ProductListingContainer = styled.div`
 	margin-top: 10px;
@@ -30,12 +31,14 @@ const ProductListingContainer = styled.div`
 `;
 const ImageContainer = styled.div`
 	width: 100%;
+	height: 60px;
 `;
 const Image = styled.img`
 	width: 100%;
 	height: 100%;
 `;
 const EditButton = styled(Button)`
+	background-color: #00ff45 !important;
 	margin-bottom: 10px !important;
 `;
 const DetailButton = styled(Button)`
@@ -51,17 +54,29 @@ const PaginationWrapper = styled.div`
 	margin: 30px 0px;
 	align-items: flex-end;
 `;
+const NoDataText = styled.p`
+	text-align: center;
+	font-size: 1.5em;
+	font-weight: 700;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+`;
 const ListProduct = (props) => {
+	const dispatch = useDispatch();
+	const history = useHistory();
 	const [selected, setSelected] = useState([]);
 	const [page, setPage] = useState(1);
 	const [deleteSelect, setDeleteSelect] = useState(false);
 	const [deleteSelectId, setDeleteSelectId] = useState();
+	const [imageClick, setImageClick] = useState(false);
+	const [getImageOnClick, setGetImageOnClick] = useState(false);
 
-	const dispatch = useDispatch();
-	const history = useHistory();
 	// Get Data From Reducer
 	const listProduct = useSelector((state) => state.productListingReducer);
 	const productData = listProduct && listProduct.product && listProduct.product.data;
+
 	console.log(listProduct);
 	useEffect(() => {
 		//Calling the Product List
@@ -71,9 +86,7 @@ const ListProduct = (props) => {
 
 	//Delete Handler when accepted
 	const handleAction = (value) => {
-		console.log(value);
-
-		// setAgree(value);
+		// To Delete Single Product
 		if (value === true) {
 			let id = deleteSelectId;
 			if (!isEmpty(id)) {
@@ -82,9 +95,10 @@ const ListProduct = (props) => {
 					dispatch(productList());
 				}, 1000);
 			}
+
+			// To Delete Multiple Product
 			if (!isEmpty(selected)) {
 				let multiIds = selected;
-				// console.log(ids);
 				dispatch(productDeleteMultiple({ multiIds }));
 				setTimeout(() => {
 					dispatch(productList());
@@ -94,6 +108,8 @@ const ListProduct = (props) => {
 			setDeleteSelect('');
 		}
 	};
+
+	//Handler for All Select
 	const handleSelectAllClick = (event) => {
 		if (event.target.checked) {
 			const newSelecteds = productData.map((n) => n.id);
@@ -102,6 +118,7 @@ const ListProduct = (props) => {
 		}
 		setSelected([]);
 	};
+	// Handler for Each Select
 	const handleSelectEachClick = (event, id) => {
 		// To Handle the Each Select Action
 		const selectedIndex = selected.indexOf(id);
@@ -124,8 +141,10 @@ const ListProduct = (props) => {
 		setDeleteSelect(true);
 	};
 
+	// Count Total Pagination
 	const PaginationCount = Math.floor(parseInt(productData && productData.length + 1) / 10);
-	console.log(PaginationCount);
+
+	// Handle Paginate onClick
 	const handlePaginate = (page) => {
 		setPage(page);
 		console.log(page);
@@ -134,12 +153,16 @@ const ListProduct = (props) => {
 		dispatch(productList(limit, last_id));
 	};
 
+	// Edit Handler
 	const handleEdit = (id) => {
 		history.push(`/edit-product/${id}`);
 	};
+	// Detail Handler
 	const handleDetail = (id) => {
 		history.push(`/detail/${id}`);
 	};
+
+	//To Know wich product select
 	const isSelected = (id) => selected && selected.indexOf(id) !== -1;
 	return (
 		<ProductListingContainer>
@@ -153,29 +176,33 @@ const ListProduct = (props) => {
 							<TableCell>Description</TableCell>
 							<TableCell>Size</TableCell>
 							<TableCell>Color</TableCell>
-							<TableCell>Price</TableCell>
-							<TableCell style={{ width: 108 }}>Stock Availability</TableCell>
+							<TableCell component="th" scope="row" style={{ width: 110 }}>
+								Price (MMK)
+							</TableCell>
+							<TableCell component="th" scope="row" style={{ width: 120 }}>
+								Stock Availability
+							</TableCell>
 							<TableCell>Warehouse</TableCell>
 							<TableCell>Category</TableCell>
 
 							<TableCell>
-								<Checkbox
-									// indeterminate={numSelected > 0 && numSelected < rowCount}
-									// checked={rowCount > 0 && numSelected === rowCount}
-									onChange={handleSelectAllClick}
-									inputProps={{ 'aria-label': 'select all product' }}
-								/>
-
-								<Tooltip title="Delete">
+								<Tooltip title="Select All">
+									<Checkbox
+										style={{ color: 'red' }}
+										onChange={handleSelectAllClick}
+										inputProps={{ 'aria-label': 'select all product' }}
+									/>
+								</Tooltip>
+								<Tooltip title="Delete Select Product">
 									<IconButton aria-label="delete" onClick={handleDeleteMultiple}>
-										<FontAwesomeIcon icon={faTrash} />
+										<FontAwesomeIcon style={{ color: 'red' }} icon={faTrash} />
 									</IconButton>
 								</Tooltip>
 							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{productData &&
+						{!isEmpty(productData) &&
 							productData.map((data) => {
 								const img = `${BASE_URL}${data && data.image}`;
 								const size = Size(data.size);
@@ -183,15 +210,23 @@ const ListProduct = (props) => {
 								const warehouse = Warehouse(data.warehouse);
 								const category = Category(data.category);
 								const isItemSelected = isSelected(data.id);
+								const handleImageClick = (value) => {
+									setImageClick(true);
+									setGetImageOnClick(value);
+								};
+								console.log(data);
 
 								return (
 									<TableRow key={data.id} hover>
 										<TableCell padding="checkbox">
-											<Checkbox
-												checked={isItemSelected}
-												onChange={(event) => handleSelectEachClick(event, data.id)}
-												// inputProps={{ 'aria-labelledby': labelId }}
-											/>
+											<Tooltip title="Select">
+												<Checkbox
+													style={{ color: 'red' }}
+													checked={isItemSelected}
+													onChange={(event) => handleSelectEachClick(event, data.id)}
+													// inputProps={{ 'aria-labelledby': labelId }}
+												/>
+											</Tooltip>
 										</TableCell>
 
 										<TableCell component="th" scope="row" style={{ width: 80 }}>
@@ -199,7 +234,7 @@ const ListProduct = (props) => {
 										</TableCell>
 										<TableCell component="th" scope="row" style={{ width: 80 }}>
 											<ImageContainer>
-												<Image src={img} />
+												<Image src={img} onClick={() => handleImageClick(img)} />
 											</ImageContainer>
 										</TableCell>
 										<TableCell component="th" scope="row" style={{ width: 80 }}>
@@ -224,39 +259,52 @@ const ListProduct = (props) => {
 											{category}
 										</TableCell>
 										<TableCell component="th" scope="row">
-											<DetailButton variant="contained" onClick={() => handleDetail(data.id)}>
-												Detail
-											</DetailButton>
-											<EditButton variant="contained" onClick={() => handleEdit(data.id)}>
-												<FontAwesomeIcon icon={faEdit} style={{ width: 12 }} />
-											</EditButton>
-											<DeleteButton
-												variant="contained"
-												color="secondary"
-												onClick={() => {
-													// handleDelete(data.id);
-													setDeleteSelectId(data.id);
-													setDeleteSelect(true);
-												}}
-											>
-												<FontAwesomeIcon icon={faTrash} />
-											</DeleteButton>
+											<Tooltip title="Product Detail">
+												<DetailButton variant="contained" onClick={() => handleDetail(data.id)}>
+													Detail
+												</DetailButton>
+											</Tooltip>
+											<Tooltip title="Product Edit">
+												<EditButton variant="contained" onClick={() => handleEdit(data.id)}>
+													<FontAwesomeIcon icon={faEdit} style={{ width: 12 }} />
+												</EditButton>
+											</Tooltip>
+											<Tooltip title="Product Delete">
+												<DeleteButton
+													variant="contained"
+													color="secondary"
+													onClick={() => {
+														// handleDelete(data.id);
+														setDeleteSelectId(data.id);
+														setDeleteSelect(true);
+													}}
+												>
+													<FontAwesomeIcon icon={faTrash} />
+												</DeleteButton>
+											</Tooltip>
 										</TableCell>
 									</TableRow>
 								);
 							})}
+						{isEmpty(productData) ? <NoDataText>No Product Data</NoDataText> : null}
 					</TableBody>
 				</Table>
 			</TableContainer>
-			<PaginationWrapper>
-				<Pagination
-					page={parseInt(page)}
-					onChange={(e, page) => handlePaginate(page)}
-					count={PaginationCount + 1}
-					variant="outlined"
-					color="primary"
-				/>
-			</PaginationWrapper>
+			{!isEmpty(productData) ? (
+				<PaginationWrapper>
+					<Pagination
+						page={parseInt(page)}
+						onChange={(e, page) => handlePaginate(page)}
+						count={PaginationCount + 1}
+						variant="outlined"
+						color="primary"
+					/>
+				</PaginationWrapper>
+			) : null}
+
+			{imageClick ? (
+				<ImageModal image={getImageOnClick} openModal={imageClick} closeModal={setImageClick} />
+			) : null}
 			{deleteSelect ? (
 				<AlertBox
 					agreeText={'Confirm'}

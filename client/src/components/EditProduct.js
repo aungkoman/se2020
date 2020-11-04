@@ -9,7 +9,8 @@ import {
 	Select,
 	MenuItem,
 	FormControl,
-	InputLabel
+	InputLabel,
+	FormLabel
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { productEdit } from '../redux/action/productEdit';
@@ -38,9 +39,12 @@ const HeaderContainer = styled.div`
 `;
 const ImageContainer = styled.div`
 	width: 30%;
+	height: 205px;
 	margin-bottom: 10px;
 	@media (max-width: 768px) {
 		width: 100%;
+		height: 300px;
+		margin-bottom: 30px;
 	}
 `;
 const HeadTextAreaContainer = styled.div`
@@ -68,7 +72,8 @@ const RadioContainer = styled(RadioGroup)`
 `;
 const ButtonStyled = styled(Button)`
 	border-radius: 10px !important ;
-	background-color: cadetblue !important;
+	background-color: #1da0ff !important;
+	background-color: ${({ valid }) => valid && `gray !important`};
 	color: black !important;
 	height: 48px !important;
 	margin-top: 25px !important;
@@ -80,7 +85,7 @@ const ButtonStyled = styled(Button)`
 `;
 const BackButtonStyled = styled(Button)`
 	border-radius: 10px !important ;
-	background-color: #99e91b !important;
+	background-color: transparent !important;
 	color: black !important;
 	height: 48px !important;
 	margin-top: 25px !important;
@@ -92,7 +97,9 @@ const BackButtonStyled = styled(Button)`
 
 const TouchableOpacity = styled.div`
 	background-color: transparent !important;
-
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	width: 100% !important;
 	height: 100% !important;
 	cursor: pointer;
@@ -211,7 +218,11 @@ const EditProduct = (props) => {
 							) : (
 								<h4 style={{ textAlign: 'center' }}>Click Here to add Image</h4>
 							)} */}
-							<Image src={image ? image : img} />
+							{image || img ? (
+								<Image src={image ? image : img} loading="lazy" alt={productName} />
+							) : (
+								<h5>ADD PHOTO</h5>
+							)}
 						</TouchableOpacity>
 					</label>
 
@@ -245,11 +256,13 @@ const EditProduct = (props) => {
 			</HeaderContainer>
 
 			<RadioContainer aria-label="size" name="size" onChange={handleSizeChange} value={size}>
-				<FormControlLabel value="1" control={<Radio />} label="Free Size" />
-				<FormControlLabel value="2" control={<Radio />} label="S Size" />
-				<FormControlLabel value="3" control={<Radio />} label="M Size" />
-				<FormControlLabel value="4" control={<Radio />} label="L Size" />
-				<FormControlLabel value="5" control={<Radio />} label="XL Size" />
+				<FormLabel style={{ color: 'black' }}>Size : </FormLabel>
+				<FormControlLabel value="1" control={<Radio />} label="F" />
+				<FormControlLabel value="2" control={<Radio />} label="S" />
+				<FormControlLabel value="3" control={<Radio />} label="M" />
+				<FormControlLabel value="4" control={<Radio />} label="L" />
+				<FormControlLabel value="5" control={<Radio />} label="XL" />
+				<FormControlLabel value="6" control={<Radio />} label="XXL" />
 			</RadioContainer>
 
 			<FormControl style={{ marginTop: 12 }} variant="outlined" fullWidth>

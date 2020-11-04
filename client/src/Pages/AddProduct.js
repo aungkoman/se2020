@@ -31,11 +31,9 @@ const Add = () => {
 	`;
 	return (
 		<ContainerWrapper>
-			{/* <Header>ADD PRODUCT</Header> */}
 			<Header>
 				<ImageContainer>
 					<Image src={process.env.PUBLIC_URL + '/logo.png'} />
-					{/* <Header>ADD PRODUCT</Header> */}
 				</ImageContainer>
 			</Header>
 			<AddProduct />

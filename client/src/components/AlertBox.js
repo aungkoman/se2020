@@ -23,16 +23,13 @@ const AlertBox = ({
 }) => {
 	const [open, setOpen] = useState(false);
 
-	// const handleClickOpen = () => {
-	// 	setOpen(true);
-	// };
-
 	useEffect(() => {
 		setOpen(true);
 	}, [trigger]);
 
 	const handleClose = () => {
 		setOpen(false);
+		//For the trigger aciton from parent
 		if (cancleAction) {
 			cancleAction(false);
 		}
@@ -40,9 +37,6 @@ const AlertBox = ({
 
 	return (
 		<div>
-			{/* <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-				Slide in alert dialog
-			</Button> */}
 			<Dialog
 				open={open}
 				TransitionComponent={Transition}

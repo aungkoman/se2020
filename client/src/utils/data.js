@@ -2,19 +2,22 @@
 export const Size = (data) => {
 	const number = Number(data);
 	if (number === 1) {
-		return 'Free Size';
+		return 'F';
 	}
 	if (number === 2) {
-		return 'S Size';
+		return 'S';
 	}
 	if (number === 3) {
-		return 'M Size';
+		return 'M';
 	}
 	if (number === 4) {
-		return 'L Size';
+		return 'L';
 	}
 	if (number === 5) {
-		return 'XL Size';
+		return 'XL';
+	}
+	if (number === 6) {
+		return 'XXL';
 	}
 };
 export const Color = (data) => {
