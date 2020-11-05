@@ -29,13 +29,16 @@ chmod 755 -R upload/
 ### Database Server Setup
 - Create a ```database user```, a ```database``` and give all privileges for that user.
 - Import database schema from ```./dbschema/se2020 2020-11-02.sql```
+ 
+ 
+### Connecting with database server
+Edit ```.htaccess``` file with newly created database server information such as ```database server host```, ```database username```, ```password``` and ```database name```;
 
-Connecting with database server
-Edit .htaccess file with newly created database server information such as database server host, database username, password and database name;
-
-Finish.
+### Finish.
 We can test our deployment setup success or not by making api request as described in our api documentation.
-API Documentation: https://documenter.getpostman.com/view/6000182/TVYGcxxz
+
+### API Documentation: 
+https://documenter.getpostman.com/view/6000182/TVYGcxxz
 
 
 
