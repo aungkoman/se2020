@@ -1,5 +1,4 @@
 <?php
-
 class PRODUCT {
     public $product;
     public function __construct() {
@@ -109,6 +108,7 @@ class PRODUCT {
         $delete_ids = (string) isset($data['ids']) ? $data['ids'] : return_fail('product->delete_multiple : ids is not defined in requested data');
         $delete_arr = json_decode($delete_ids,true);
         if(gettype($delete_arr) == 'NULL' ) return_fail("product->delete_multiple : ids does not valid json array ");
+        R::begin();
         for($i = 0; $i < count($delete_arr); $i++){
             $encrypt_id = (string) sanitize_str($delete_arr[$i]);
             $id = decrypt($encrypt_id);
@@ -118,9 +118,11 @@ class PRODUCT {
                 R::trash($product);
             }
             catch(Exception $exp) {
-                return_fail("product->delete_multiple : exception", $exp->getMessage());
+                R::rollback();
+                return_fail("product->delete_multiple : exception and rollback", $exp->getMessage());
             }
         }
+        R::commit(); // yes we get it :D
         return_success("product->delete", $delete_ids);
     }
 } // end for class
