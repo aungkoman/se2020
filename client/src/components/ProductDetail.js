@@ -35,6 +35,27 @@ const HeaderContainer = styled.div`
 		width: 100%;
 	}
 `;
+const TextBox = styled(TextField)`
+	> * {
+		color: #333 !important;
+	}
+
+	&& [class*='MuiInputBase-root .Mui-disabled'] {
+		color: black !important;
+	}
+`;
+const FormControlLabelStyled = styled(FormControlLabel)`
+	> * {
+		color: #333 !important;
+	}
+`;
+
+const FormControlStyled = styled(FormControl)`
+	> * {
+		color: #333 !important;
+	}
+`;
+
 const ImageContainer = styled.div`
 	width: 30%;
 	margin-bottom: 10px;
@@ -128,8 +149,8 @@ const EditProduct = (props) => {
 					</label>
 				</ImageContainer>
 				<HeadTextAreaContainer>
-					<TextField label="Product Name" variant="outlined" value={productName} disabled fullWidth />
-					<TextField
+					<TextBox label="Product Name" variant="outlined" value={productName} disabled fullWidth />
+					<TextBox
 						label="Product Description"
 						variant="outlined"
 						value={description}
@@ -143,14 +164,14 @@ const EditProduct = (props) => {
 			</HeaderContainer>
 
 			<RadioContainer aria-label="size" name="size" value={size}>
-				<FormControlLabel value="1" control={<Radio disabled />} label="Free Size" />
-				<FormControlLabel value="2" control={<Radio disabled />} label="S Size" />
-				<FormControlLabel value="3" control={<Radio disabled />} label="M Size" />
-				<FormControlLabel value="4" control={<Radio disabled />} label="L Size" />
-				<FormControlLabel value="5" control={<Radio disabled />} label="XL Size" />
+				<FormControlLabelStyled value="1" control={<Radio disabled />} label="Free Size" />
+				<FormControlLabelStyled value="2" control={<Radio disabled />} label="S Size" />
+				<FormControlLabelStyled value="3" control={<Radio disabled />} label="M Size" />
+				<FormControlLabelStyled value="4" control={<Radio disabled />} label="L Size" />
+				<FormControlLabelStyled value="5" control={<Radio disabled />} label="XL Size" />
 			</RadioContainer>
 
-			<FormControl style={{ marginTop: 12 }} variant="outlined" fullWidth>
+			<FormControlStyled style={{ marginTop: 12 }} variant="outlined" fullWidth>
 				<InputLabel>Color</InputLabel>
 				<Select labelId="color-select" label="Color" disabled value={color}>
 					<MenuItem value={1}>Black</MenuItem>
@@ -160,9 +181,9 @@ const EditProduct = (props) => {
 					<MenuItem value={5}>Grey</MenuItem>
 					<MenuItem value={6}>Red</MenuItem>
 				</Select>
-			</FormControl>
+			</FormControlStyled>
 
-			<TextField
+			<TextBox
 				style={{ marginTop: 12 }}
 				label="Price"
 				variant="outlined"
@@ -171,7 +192,7 @@ const EditProduct = (props) => {
 				disabled
 				fullWidth
 			/>
-			<TextField
+			<TextBox
 				style={{ marginTop: 12 }}
 				label="Stock Availability"
 				variant="outlined"
@@ -180,21 +201,21 @@ const EditProduct = (props) => {
 				fullWidth
 			/>
 
-			<FormControl style={{ marginTop: 12 }} variant="outlined" fullWidth>
+			<FormControlStyled style={{ marginTop: 12 }} variant="outlined" fullWidth>
 				<InputLabel>Warehouse</InputLabel>
 				<Select labelId="color-select" label="Warehouse" value={warehouse} disabled>
 					<MenuItem value={1}>A</MenuItem>
 					<MenuItem value={2}>B</MenuItem>
 					<MenuItem value={3}>C</MenuItem>
 				</Select>
-			</FormControl>
-			<FormControl style={{ marginTop: 12 }} variant="outlined" fullWidth>
+			</FormControlStyled>
+			<FormControlStyled style={{ marginTop: 12 }} variant="outlined" fullWidth>
 				<InputLabel>Category</InputLabel>
 				<Select labelId="color-select" label="Category" value={category} disabled>
 					<MenuItem value={1}>Man</MenuItem>
 					<MenuItem value={2}>Woman</MenuItem>
 				</Select>
-			</FormControl>
+			</FormControlStyled>
 
 			<BackButtonStyled fullWidth onClick={handleBack}>
 				Back
