@@ -1,5 +1,5 @@
 # Product Module for SE2020
-SE2020 အတွက် Two Guy အဖွဲ့မှ ရေးသားနေသော module ဖြစ်ပါသည်။
+Developed by Team Two Guy.
 
 ### Backend Server Deployment Note
 Project Source Code
