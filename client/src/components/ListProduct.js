@@ -11,7 +11,7 @@ import { isEmpty } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash, faUserEdit } from '@fortawesome/free-solid-svg-icons';
-import { Button, Checkbox, IconButton, Tooltip } from '@material-ui/core';
+import { Backdrop, Button, Checkbox, CircularProgress, IconButton, Tooltip } from '@material-ui/core';
 import { productList } from '../redux/action/productList';
 import { productDelete, productDeleteMultiple } from '../redux/action/productDelete';
 import { login } from '../redux/action/login';
@@ -76,13 +76,6 @@ const ListProduct = (props) => {
 	// Get Data From Reducer
 	const listProduct = useSelector((state) => state.productListingReducer);
 	const productData = listProduct && listProduct.product && listProduct.product.data;
-
-	console.log(listProduct);
-	useEffect(() => {
-		//Calling the Product List
-		dispatch(productList());
-		dispatch(login());
-	}, []);
 
 	//Delete Handler when accepted
 	const handleAction = (value) => {
@@ -164,6 +157,7 @@ const ListProduct = (props) => {
 
 	//To Know wich product select
 	const isSelected = (id) => selected && selected.indexOf(id) !== -1;
+
 	return (
 		<ProductListingContainer>
 			<TableContainer>

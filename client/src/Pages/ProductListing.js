@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import ContainerWrapper from '../components/Container';
 import AddProduct from '../components/AddProduct';
@@ -8,12 +8,13 @@ import Paper from '@material-ui/core/Paper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import IconButton from '@material-ui/core/IconButton';
-import { Button, Tooltip } from '@material-ui/core';
+import { Backdrop, Button, CircularProgress, Tooltip } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import { Link, useHistory } from 'react-router-dom';
 import { isEmpty } from 'lodash';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { productList } from '../redux/action/productList';
+import { login } from '../redux/action/login';
 const Header = styled.h1`
 	text-align: center;
 	font-size: 25px;
@@ -78,6 +79,26 @@ const ProductListing = () => {
 	const history = useHistory();
 	const dispatch = useDispatch();
 	const [search, setSearch] = useState('');
+	const [loading, setLoading] = React.useState(false);
+	const listProduct = useSelector((state) => state.productListingReducer);
+
+	// if loading from reducer is true
+	useEffect(() => {
+		if (listProduct && listProduct.loading === true) {
+			setLoading(true);
+		} else {
+			setLoading(false);
+		}
+	}, [listProduct.loading]);
+
+	// Calling data when screen loaded
+	useEffect(() => {
+		//Calling the Product List
+		dispatch(productList());
+		dispatch(login());
+	}, []);
+
+	//handle search
 	const handleSearch = (e) => {
 		e.preventDefault();
 		let limit = 10;
@@ -90,30 +111,38 @@ const ProductListing = () => {
 		setSearch(e.target.value);
 	};
 	const handleAddProduct = () => history.push('/add-product');
-	return (
-		<ContainerWrapper>
-			<Header>
-				<ImageContainer>
-					<Image src={process.env.PUBLIC_URL + '/logo.png'} />
-				</ImageContainer>
-			</Header>
-			<HeaderWrapper>
-				<Avatar>A</Avatar>
-				<SearchWrapper>
-					<SearchInput placeholder="Search Here" value={search} onChange={handleSearchChange} />
-					<Tooltip title="Product Search">
-						<IconButton onClick={handleSearch}>
-							<FontAwesomeIcon icon={faSearch} />
-						</IconButton>
-					</Tooltip>
-				</SearchWrapper>
-				<ButtonWrapper>
-					<ButtonStyled onClick={handleAddProduct}> ADD PRODUCT </ButtonStyled>
-				</ButtonWrapper>
-			</HeaderWrapper>
-			<ListProduct />
-		</ContainerWrapper>
-	);
+	if (listProduct && listProduct.loading === true) {
+		return (
+			<Backdrop open={loading}>
+				<CircularProgress color="inherit" />
+			</Backdrop>
+		);
+	} else {
+		return (
+			<ContainerWrapper>
+				<Header>
+					<ImageContainer>
+						<Image src={process.env.PUBLIC_URL + '/logo.png'} />
+					</ImageContainer>
+				</Header>
+				<HeaderWrapper>
+					<Avatar>A</Avatar>
+					<SearchWrapper>
+						<SearchInput placeholder="Search Here" value={search} onChange={handleSearchChange} />
+						<Tooltip title="Product Search">
+							<IconButton onClick={handleSearch}>
+								<FontAwesomeIcon icon={faSearch} />
+							</IconButton>
+						</Tooltip>
+					</SearchWrapper>
+					<ButtonWrapper>
+						<ButtonStyled onClick={handleAddProduct}> ADD PRODUCT </ButtonStyled>
+					</ButtonWrapper>
+				</HeaderWrapper>
+				<ListProduct />
+			</ContainerWrapper>
+		);
+	}
 };
 
 export default ProductListing;
