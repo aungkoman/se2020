@@ -1,20 +1,17 @@
-import styled from 'styled-components';
-import ContainerWrapper from './components/Container';
-import AddProduct from './components/AddProduct';
-import ListProduct from './components/ListProduct';
-const Header = styled.h1`
-	text-align: center;
-	font-size: 25px;
-`;
+import React from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import ProductListing from './Pages/ProductListing';
+import Add from './Pages/AddProduct';
+import Edit from './Pages/EditProduct';
+import Detail from './Pages/ProductDetail';
 function App() {
 	return (
-		<>
-			<ContainerWrapper>
-				<Header>ADD PRODUCT</Header>
-				<AddProduct />
-				<ListProduct />
-			</ContainerWrapper>
-		</>
+		<Router>
+			<Route exact path="/" component={ProductListing} />
+			<Route exact path="/add-product" component={Add} />
+			<Route exact path="/edit-product/:id" component={Edit} />
+			<Route exact path="/detail/:id" component={Detail} />
+		</Router>
 	);
 }
 

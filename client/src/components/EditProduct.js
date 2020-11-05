@@ -10,13 +10,13 @@ import {
 	MenuItem,
 	FormControl,
 	InputLabel,
-	StepLabel,
 	FormLabel
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { productAdd } from '../redux/action/productAdd';
-import { productList } from '../redux/action/productList';
-import { useHistory } from 'react-router-dom';
+import { productEdit } from '../redux/action/productEdit';
+import { productDetail } from '../redux/action/productDetail';
+import { useHistory, useParams } from 'react-router-dom';
+import { BASE_URL } from '../utils/baseURL';
 import AlertBox from './AlertBox';
 const InputContainer = styled.div`
 	margin-top: 5px;
@@ -41,11 +41,10 @@ const ImageContainer = styled.div`
 	width: 30%;
 	height: 205px;
 	margin-bottom: 10px;
-
 	@media (max-width: 768px) {
 		width: 100%;
 		height: 300px;
-		margin-bottom: 20px;
+		margin-bottom: 30px;
 	}
 `;
 const HeadTextAreaContainer = styled.div`
@@ -59,9 +58,6 @@ const HeadTextAreaContainer = styled.div`
 const Image = styled.img`
 	width: 100%;
 	height: 100%;
-
-	aspect-ratio: attr(width) / attr(height);
-
 	display: block;
 `;
 const RadioContainer = styled(RadioGroup)`
@@ -113,9 +109,10 @@ const TouchableOpacity = styled.div`
 	}
 `;
 
-const AddProduct = () => {
+const EditProduct = (props) => {
 	const history = useHistory();
 	const dispatch = useDispatch();
+	const { id } = useParams();
 	const [productName, setProductName] = useState('');
 	const [description, setDescription] = useState('');
 	const [size, setSize] = useState('');
@@ -125,12 +122,33 @@ const AddProduct = () => {
 	const [warehouse, setWarehouse] = useState('');
 	const [category, setCategory] = useState('');
 	const [image, setImage] = useState();
+	const [img, setImg] = useState();
 	const [file, setFile] = useState();
 	const [openAlertBox, setOpenAlerBox] = useState(false);
 	const valid = () => {
-		return productName && description && size && color && price && stock && warehouse && category && image;
+		return productName && description && size && color && price && stock && warehouse && category && (img || image);
 	};
+	const getProduct = useSelector((state) => state.productDetailReducer);
 
+	useEffect(() => {
+		dispatch(productDetail({ id }));
+	}, []);
+	console.log(description);
+	useEffect(() => {
+		const data = getProduct && getProduct.product && getProduct.product.data;
+		console.log(data);
+		const img = `${BASE_URL}${data && data.image}`;
+		setProductName(data && data.name);
+		setDescription(data && data.description);
+		setSize(data && data.size);
+		setColor(data && data.color);
+		setPrice(data && data.price);
+		setStock(data && data.stock);
+		setWarehouse(data && data.warehouse);
+		setCategory(data && data.category);
+		setImg(img);
+		// setImage(img);
+	}, [getProduct]);
 	const photosChangeHandler = () => (event) => {
 		setImage();
 		let { files } = event.target;
@@ -140,7 +158,6 @@ const AddProduct = () => {
 	const readAndAddPreview = (file) => {
 		let reader = new FileReader();
 		reader.onloadend = () => {
-			console.log(reader);
 			setImage(reader && reader.result);
 			return reader && reader.result;
 		};
@@ -177,21 +194,13 @@ const AddProduct = () => {
 		e.preventDefault();
 		if (!valid()) return false;
 		let name = productName;
-		dispatch(productAdd({ name, description, size, color, price, stock, warehouse, category, image }));
+		dispatch(productEdit({ id, name, description, size, color, price, stock, warehouse, category, image }));
 		setOpenAlerBox(true);
 	};
-	// if (getProduct && getProduct.data && getProduct.data.status === true) {
-
-	// }
-
 	const handleAction = (value) => {
 		console.log(value);
-		if (value === true) {
-			history.push('/add-product');
-		}
-	};
-	const handleBackAction = (value) => {
-		console.log(value);
+
+		// setAgree(value);
 		if (value === true) {
 			history.push('/');
 		}
@@ -201,10 +210,19 @@ const AddProduct = () => {
 	return (
 		<InputContainer>
 			<HeaderContainer>
-				<ImageContainer>
+				<ImageContainer style={{ border: 'black' }}>
 					<label htmlFor="upload-button">
 						<TouchableOpacity>
-							{image ? <Image src={image} loading="lazy" /> : <h5>ADD PHOTO</h5>}
+							{/* {image ? (
+								<Image src={image} />
+							) : (
+								<h4 style={{ textAlign: 'center' }}>Click Here to add Image</h4>
+							)} */}
+							{image || img ? (
+								<Image src={image ? image : img} loading="lazy" alt={productName} />
+							) : (
+								<h5>ADD PHOTO</h5>
+							)}
 						</TouchableOpacity>
 					</label>
 
@@ -218,14 +236,14 @@ const AddProduct = () => {
 				</ImageContainer>
 				<HeadTextAreaContainer>
 					<TextField
-						label="Add Product Name"
+						label="Product Name"
 						variant="outlined"
 						value={productName}
 						onChange={handleChange}
 						fullWidth
 					/>
 					<TextField
-						label="Add Product Description"
+						label="Product Description"
 						variant="outlined"
 						value={description}
 						style={{ marginTop: 10 }}
@@ -293,24 +311,22 @@ const AddProduct = () => {
 				</Select>
 			</FormControl>
 			<ButtonStyled valid={!valid() ? 1 : 0} fullWidth onClick={handleAdd}>
-				ADD PRODUCT
+				Update PRODUCT
 			</ButtonStyled>
-			<BackButtonStyled fullWidth onClick={handleBack} color="primary">
+			<BackButtonStyled fullWidth onClick={handleBack}>
 				Back
 			</BackButtonStyled>
 			{openAlertBox ? (
 				<AlertBox
-					agreeText={'Add New'}
-					closeText={'Back'}
+					agreeText={'OK'}
 					title={`Prodcut Name: ${productName}`}
-					description={'has been created successfully'}
+					description={'has been updated'}
 					trigger={true}
 					handleAction={handleAction}
-					handleBackAction={handleBackAction}
 				/>
 			) : null}
 		</InputContainer>
 	);
 };
 
-export default AddProduct;
+export default EditProduct;
