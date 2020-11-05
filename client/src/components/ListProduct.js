@@ -75,7 +75,9 @@ const ListProduct = (props) => {
 
 	// Get Data From Reducer
 	const listProduct = useSelector((state) => state.productListingReducer);
-	const productData = listProduct && listProduct.product && listProduct.product.data;
+
+	// Get data from listProduct
+	const productData = listProduct && listProduct.product && listProduct.product && listProduct.product.data;
 
 	//Delete Handler when accepted
 	const handleAction = (value) => {
@@ -182,14 +184,22 @@ const ListProduct = (props) => {
 							<TableCell>
 								<Tooltip title="Select All">
 									<Checkbox
-										style={{ color: 'red' }}
+										style={isEmpty(productData) ? { color: 'gray' } : { color: 'blue' }}
+										disabled={isEmpty(productData) ? true : false}
 										onChange={handleSelectAllClick}
 										inputProps={{ 'aria-label': 'select all product' }}
 									/>
 								</Tooltip>
-								<Tooltip title="Delete Select Product">
-									<IconButton aria-label="delete" onClick={handleDeleteMultiple}>
-										<FontAwesomeIcon style={{ color: 'red' }} icon={faTrash} />
+								<Tooltip title="Delete Selected Product">
+									<IconButton
+										disabled={isEmpty(selected) ? true : false}
+										aria-label="delete"
+										onClick={handleDeleteMultiple}
+									>
+										<FontAwesomeIcon
+											style={isEmpty(selected) ? { color: 'gray' } : { color: 'red' }}
+											icon={faTrash}
+										/>
 									</IconButton>
 								</Tooltip>
 							</TableCell>

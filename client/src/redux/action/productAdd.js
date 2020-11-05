@@ -39,7 +39,6 @@ export const productAdd = ({ name, description, image, size, color, price, stock
 		dispatch(productAddStart());
 		try {
 			const res = await axios.post('/api/v1/product/', data);
-			console.log(res);
 			if (res && res.data) {
 				dispatch(productAddSuccess(res.data));
 			} else {

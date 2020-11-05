@@ -10,7 +10,8 @@ import {
 	MenuItem,
 	FormControl,
 	InputLabel,
-	FormLabel
+	FormLabel,
+	CircularProgress
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { productEdit } from '../redux/action/productEdit';
@@ -103,12 +104,17 @@ const TouchableOpacity = styled.div`
 	width: 100% !important;
 	height: 100% !important;
 	cursor: pointer;
+	border-style: solid;
+	border-width: 1px;
 	&:hover {
 		opacity: 3;
 		background-color: rgb(3, 255, 150, 0.2) !important;
 	}
 `;
-
+const ProgressContainer = styled.div`
+	margin-right: 10px;
+	margin-top: 5px;
+`;
 const EditProduct = (props) => {
 	const history = useHistory();
 	const dispatch = useDispatch();
@@ -129,7 +135,9 @@ const EditProduct = (props) => {
 		return productName && description && size && color && price && stock && warehouse && category && (img || image);
 	};
 	const getProduct = useSelector((state) => state.productDetailReducer);
-
+	const getEditedProduct = useSelector((state) => state.productEditReducer);
+	const isLoading = getEditedProduct && getEditedProduct.loading;
+	const editedProductStatus = getEditedProduct && getEditedProduct.data && getEditedProduct.data.status;
 	useEffect(() => {
 		dispatch(productDetail({ id }));
 	}, []);
@@ -157,11 +165,14 @@ const EditProduct = (props) => {
 	};
 	const readAndAddPreview = (file) => {
 		let reader = new FileReader();
-		reader.onloadend = () => {
-			setImage(reader && reader.result);
-			return reader && reader.result;
-		};
-		reader && reader.readAsDataURL(file);
+		if (file) {
+			reader.onloadend = () => {
+				console.log(reader);
+				setImage(reader && reader.result);
+				return reader && reader.result;
+			};
+			reader && reader.readAsDataURL(file);
+		}
 	};
 
 	const handleChange = (e) => {
@@ -290,6 +301,7 @@ const EditProduct = (props) => {
 				style={{ marginTop: 12 }}
 				label="Stock Availability"
 				variant="outlined"
+				type="number"
 				value={stock}
 				onChange={handleStockChange}
 				fullWidth
@@ -311,12 +323,17 @@ const EditProduct = (props) => {
 				</Select>
 			</FormControl>
 			<ButtonStyled valid={!valid() ? 1 : 0} fullWidth onClick={handleAdd}>
+				{isLoading === true ? (
+					<ProgressContainer>
+						<CircularProgress size={15} color={'inherit'} />
+					</ProgressContainer>
+				) : null}
 				Update PRODUCT
 			</ButtonStyled>
 			<BackButtonStyled fullWidth onClick={handleBack}>
 				Back
 			</BackButtonStyled>
-			{openAlertBox ? (
+			{editedProductStatus && openAlertBox ? (
 				<AlertBox
 					agreeText={'OK'}
 					title={`Prodcut Name: ${productName}`}
