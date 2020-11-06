@@ -42,7 +42,8 @@ class PRODUCT {
             else $products = R::find('product', ' name LIKE ? LIMIT ?', ["%".$search."%",$limit]);
         }
         else{
-            $last_id = (int) isset($data['last_id']) ? sanitize_int($data['last_id'], "product->select : last_id int sanitize") : 0;
+            $last_id_encrypted = (int) isset($data['last_id']) ? sanitize_int($data['last_id'], "product->select : last_id int sanitize") : encrypt(0);
+            $last_id = decrypt($last_id_encrypted);
             if ($limit == 0) $products = R::find('product', ' id > ? ', [$last_id]);
             else $products = R::find('product', ' id > ? LIMIT ?', [$last_id, $limit]);
         }
