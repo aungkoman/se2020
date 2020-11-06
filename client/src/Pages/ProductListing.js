@@ -79,9 +79,9 @@ const ProductListing = () => {
 	const history = useHistory();
 	const dispatch = useDispatch();
 	const [search, setSearch] = useState('');
-	const [loading, setLoading] = React.useState(false);
+	const [loading, setLoading] = useState(false);
 	const listProduct = useSelector((state) => state.productListingReducer);
-
+	const login = useSelector((state) => state.loginReducer);
 	// if loading from reducer is true
 	useEffect(() => {
 		if (listProduct && listProduct.loading === true) {
@@ -94,11 +94,13 @@ const ProductListing = () => {
 	// Calling data when screen loaded
 	useEffect(() => {
 		//Calling the Product List
-
-		dispatch(login());
-
-		dispatch(productList());
-	}, []);
+		if (login && login.data && login.data.status === true) {
+			dispatch(productList());
+			setLoading(false);
+		} else {
+			setLoading(true);
+		}
+	}, [login.data.status]);
 
 	//handle search
 	const handleSearch = (e) => {
@@ -133,7 +135,7 @@ const ProductListing = () => {
 		}
 	};
 
-	if (listProduct && listProduct.loading === true) {
+	if ((listProduct && listProduct.loading === true) || (login && login.loading === true)) {
 		return (
 			<Backdrop open={loading}>
 				<CircularProgress color="inherit" />

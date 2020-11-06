@@ -23,12 +23,15 @@ export const productListingError = (err) => {
 export const productList = (limit, last_id, search) => {
 	const token = getCookie('token');
 	const getLimit = limit ? parseInt(limit) : 10;
+	// const getLastId = last_id ? last_id : 0;
+
+	// For the Pagination
 	const getLastId = last_id && parseInt(last_id) !== 0 ? parseInt(last_id - 1) * 10 : 0;
 
 	const data = qs.stringify({
 		ops_type: 'select',
 		limit: getLimit,
-		last_id: getLastId,
+		pagination: getLastId,
 		search: search,
 		jwt: token
 	});

@@ -10,16 +10,21 @@ import styled from 'styled-components';
 import { isEmpty } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faUserEdit } from '@fortawesome/free-solid-svg-icons';
-import { Backdrop, Button, Checkbox, CircularProgress, IconButton, Tooltip } from '@material-ui/core';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { Button, Checkbox, IconButton, Tooltip } from '@material-ui/core';
 import { productList } from '../redux/action/productList';
 import { productDelete, productDeleteMultiple } from '../redux/action/productDelete';
-import { login } from '../redux/action/login';
 import { BASE_URL } from '../utils/baseURL';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom';
 import { Size, Color, Warehouse, Category } from '../utils/data';
 import AlertBox from './AlertBox';
 import ImageModal from './ImageModal';
+import { PaginationItem } from '@material-ui/lab';
+
+// For Query Params to use pagnitaion
+function useQuery() {
+	return new URLSearchParams(useLocation().search);
+}
 
 const ProductListingContainer = styled.div`
 	margin-top: 10px;
@@ -64,15 +69,18 @@ const NoDataText = styled.p`
 	transform: translate(-50%, -50%);
 `;
 const ListProduct = (props) => {
+	let query = useQuery();
+	const getQuery = query.get('p');
 	const dispatch = useDispatch();
 	const history = useHistory();
 	const [selected, setSelected] = useState([]);
-	const [page, setPage] = useState(1);
+
+	// eslint-disable-next-line react-hooks/rules-of-hooks
+	const [page, setPage] = getQuery && parseInt(getQuery) !== 0 ? useState(getQuery) : useState(1);
 	const [deleteSelect, setDeleteSelect] = useState(false);
 	const [deleteSelectId, setDeleteSelectId] = useState();
 	const [imageClick, setImageClick] = useState(false);
 	const [getImageOnClick, setGetImageOnClick] = useState(false);
-
 	// Get Data From Reducer
 	const listProduct = useSelector((state) => state.productListingReducer);
 
@@ -137,12 +145,14 @@ const ListProduct = (props) => {
 	};
 
 	// Count Total Pagination
-	const PaginationCount = Math.floor(parseInt(productData && productData.length + 1) / 10);
+	const PaginationCount = Math.floor(
+		parseInt(listProduct && listProduct.product && listProduct.product.msg + 1) / 10
+	);
 
 	// Handle Paginate onClick
 	const handlePaginate = (page) => {
 		setPage(page);
-		console.log(page);
+		// console.log(value);
 		let limit = 10;
 		let last_id = page;
 		dispatch(productList(limit, last_id));
@@ -163,7 +173,7 @@ const ListProduct = (props) => {
 	return (
 		<ProductListingContainer>
 			<TableContainer>
-				<Table aria-label="simple table">
+				<Table aria-label="product table">
 					<TableHead>
 						<TableRow hover>
 							<TableCell padding="checkbox"></TableCell>
@@ -218,7 +228,6 @@ const ListProduct = (props) => {
 									setImageClick(true);
 									setGetImageOnClick(value);
 								};
-								console.log(data);
 
 								return (
 									<TableRow key={data.id} hover>
@@ -298,10 +307,17 @@ const ListProduct = (props) => {
 				<PaginationWrapper>
 					<Pagination
 						page={parseInt(page)}
-						onChange={(e, page) => handlePaginate(page)}
-						count={PaginationCount + 1}
 						variant="outlined"
 						color="primary"
+						count={PaginationCount + 1}
+						onChange={(e, page) => handlePaginate(page)}
+						renderItem={(item) => (
+							<PaginationItem
+								component={Link}
+								to={`/${item.page === 1 ? '' : `?p=${item.page}`}`}
+								{...item}
+							/>
+						)}
 					/>
 				</PaginationWrapper>
 			) : null}
