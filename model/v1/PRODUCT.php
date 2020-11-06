@@ -37,22 +37,52 @@ class PRODUCT {
     public function select($data) {
         $search = (string) isset($data['search']) ? sanitize_str($data['search'], "product->select : search string sanitize") : "";
         $limit = (int) isset($data['limit']) ? sanitize_int($data['limit'], "product->select : limit int sanitize") : 0;
+        $pagination = (int) isset($data['pagination']) ? sanitize_int($data['pagination'], "product->select : pagination int sanitize") : 0;
+        $last_id_encrypted = (string) isset($data['last_id']) ? sanitize_str($data['last_id'], "product->select : last_id str sanitize") : encrypt(0);
+        $last_id = decrypt($last_id_encrypted);
+        // product count
+        $total_product_count = count(R::find('product', 'id > ?', [0]));
+        // search
         if($search != ""){
             if ($limit == 0) $products = R::find('product', ' name LIKE ?', ["%".$search."%"]);
             else $products = R::find('product', ' name LIKE ? LIMIT ?', ["%".$search."%",$limit]);
         }
-        else{
-            $last_id_encrypted = (string) isset($data['last_id']) ? sanitize_str($data['last_id'], "product->select : last_id str sanitize") : encrypt(0);
-            $last_id = decrypt($last_id_encrypted);
+        // last id next for
+        else if($last_id != 0){
             if ($limit == 0) $products = R::find('product', ' id > ? ', [$last_id]);
             else $products = R::find('product', ' id > ? LIMIT ?', [$last_id, $limit]);
+        }
+        // pagination
+        else {
+            $products = R::find('product', ' id > ?', [0]);
+            $return_data = array();
+            foreach ($products AS $index => $product) {
+                $product->id = encrypt($product->id);
+                $return_data[] = $product;
+            }
+            $pagination_data_shift = $return_data;
+            for($i=0; $i < $pagination; $i++){
+                if($i < $pagination ){
+                    array_shift($pagination_data_shift);
+                }
+            }
+            $pagination_data = array();
+            if($limit > 0 ){
+                for($i = 0; $i < $limit; $i++){
+                    if($i < count($pagination_data_shift)) $pagination_data[] = $pagination_data_shift[$i];
+                }
+            }
+            else {
+                $pagination_data = $pagination_data_shift;
+            }
+            return_success($total_product_count, $pagination_data);
         }
         $return_data = array();
         foreach ($products AS $index => $product) {
             $product->id = encrypt($product->id);
             $return_data[] = $product;
         }
-        return_success("product->select " . count($return_data) , $return_data);
+        return_success($total_product_count, $return_data);
     }
     
     public function detail($data) {
