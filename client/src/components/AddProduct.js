@@ -402,7 +402,7 @@ const AddProduct = () => {
 				<AlertBox
 					agreeText={'OK'}
 					title={`Error!!!`}
-					description={'Something is wrong!!! Pls Try Again '}
+					description={'Something is wrong !!! Pls Try Again '}
 					trigger={true}
 					handleAction={handleAction}
 				/>
@@ -412,9 +412,9 @@ const AddProduct = () => {
 				<AlertBox
 					agreeText={'OK'}
 					title={`Error!!!`}
-					description={'Something is wrong!!! Pls Try Again '}
+					description={'Network Error !!! Pls Try Again '}
 					trigger={true}
-					handleAction={handleAction}
+					handleAction={handleBackAction}
 				/>
 			) : null}
 		</InputContainer>
