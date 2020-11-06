@@ -145,9 +145,10 @@ const ListProduct = (props) => {
 	};
 
 	// Count Total Pagination
-	const PaginationCount = Math.floor(
-		parseInt(listProduct && listProduct.product && listProduct.product.msg + 1) / 10
-	);
+	const PaginationCount =
+		productData && productData.length > 9
+			? Math.floor(parseInt(listProduct && listProduct.product && listProduct.product.msg + 1) / 10)
+			: 0;
 
 	// Handle Paginate onClick
 	const handlePaginate = (page) => {
