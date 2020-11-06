@@ -41,7 +41,7 @@ class PRODUCT {
         $last_id_encrypted = (string) isset($data['last_id']) ? sanitize_str($data['last_id'], "product->select : last_id str sanitize") : encrypt(0);
         $last_id = decrypt($last_id_encrypted);
         // product count
-        $total_product_count = count(R::find('product', 'id > ?', [0]));
+        $total_product_count = R::count('product');
         // search
         if($search != ""){
             if ($limit == 0) $products = R::find('product', ' name LIKE ?', ["%".$search."%"]);
@@ -54,28 +54,8 @@ class PRODUCT {
         }
         // pagination
         else {
-            $products = R::find('product', ' id > ?', [0]);
-            $return_data = array();
-            foreach ($products AS $index => $product) {
-                $product->id = encrypt($product->id);
-                $return_data[] = $product;
-            }
-            $pagination_data_shift = $return_data;
-            for($i=0; $i < $pagination; $i++){
-                if($i < $pagination ){
-                    array_shift($pagination_data_shift);
-                }
-            }
-            $pagination_data = array();
-            if($limit > 0 ){
-                for($i = 0; $i < $limit; $i++){
-                    if($i < count($pagination_data_shift)) $pagination_data[] = $pagination_data_shift[$i];
-                }
-            }
-            else {
-                $pagination_data = $pagination_data_shift;
-            }
-            return_success($total_product_count, $pagination_data);
+            if($limit == 0 ) $products=R::findAll('product','LIMIT ?, ?',[$pagination,$total_product_count]);
+            else $products=R::findAll('product','LIMIT ?,? ',[$pagination,$limit]);
         }
         $return_data = array();
         foreach ($products AS $index => $product) {
