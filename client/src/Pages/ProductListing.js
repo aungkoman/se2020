@@ -94,8 +94,10 @@ const ProductListing = () => {
 	// Calling data when screen loaded
 	useEffect(() => {
 		//Calling the Product List
-		dispatch(productList());
+
 		dispatch(login());
+
+		dispatch(productList());
 	}, []);
 
 	//handle search
@@ -110,7 +112,27 @@ const ProductListing = () => {
 	const handleSearchChange = (e) => {
 		setSearch(e.target.value);
 	};
+
+	// To handle Logo to go back default page
+	const logoHandaler = () => {
+		history.push(`/`);
+		dispatch(productList());
+		setSearch('');
+	};
+	//Trigger to add-product page when click addproduct
 	const handleAddProduct = () => history.push('/add-product');
+
+	const handleEnterSearch = (e) => {
+		if (e.keyCode === 13) {
+			e.preventDefault();
+			let limit = 10;
+			let lastId = 0;
+			if (!isEmpty(search)) {
+				dispatch(productList(limit, lastId, search));
+			}
+		}
+	};
+
 	if (listProduct && listProduct.loading === true) {
 		return (
 			<Backdrop open={loading}>
@@ -121,14 +143,19 @@ const ProductListing = () => {
 		return (
 			<ContainerWrapper>
 				<Header>
-					<ImageContainer>
-						<Image src={process.env.PUBLIC_URL + '/logo.png'} />
+					<ImageContainer onClick={logoHandaler}>
+						<Image style={{ cursor: 'pointer' }} src={process.env.PUBLIC_URL + '/logo.png'} />
 					</ImageContainer>
 				</Header>
 				<HeaderWrapper>
 					<Avatar>A</Avatar>
 					<SearchWrapper>
-						<SearchInput placeholder="Search Here" value={search} onChange={handleSearchChange} />
+						<SearchInput
+							placeholder="Search Here"
+							onKeyDown={handleEnterSearch}
+							value={search}
+							onChange={handleSearchChange}
+						/>
 						<Tooltip title="Product Search">
 							<IconButton onClick={handleSearch}>
 								<FontAwesomeIcon icon={faSearch} />

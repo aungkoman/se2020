@@ -63,13 +63,16 @@ const AlertBox = ({
 					{closeText ? (
 						<Button
 							onClick={handleBackAction ? () => handleBackAction(true) : handleClose}
-							color="secondary"
+							style={{ backgroundColor: '#00ff45' }}
 						>
 							{closeText}
 						</Button>
 					) : null}
 
-					<Button onClick={() => handleAction(true)} style={closeText ? null : { margin: 0 }} color="primary">
+					<Button
+						onClick={() => handleAction(true)}
+						style={(closeText ? null : { margin: 0 }, { backgroundColor: '#1da0ff' })}
+					>
 						{agreeText}
 					</Button>
 				</DialogActions>

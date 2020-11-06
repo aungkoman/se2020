@@ -11,7 +11,8 @@ import {
 	FormControl,
 	InputLabel,
 	StepLabel,
-	FormLabel
+	FormLabel,
+	CircularProgress
 } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { productAdd } from '../redux/action/productAdd';
@@ -107,12 +108,17 @@ const TouchableOpacity = styled.div`
 	width: 100% !important;
 	height: 100% !important;
 	cursor: pointer;
+	border-style: solid;
+	border-width: 1px;
 	&:hover {
 		opacity: 3;
 		background-color: rgb(3, 255, 150, 0.2) !important;
 	}
 `;
-
+const ProgressContainer = styled.div`
+	margin-right: 10px;
+	margin-top: 5px;
+`;
 const AddProduct = () => {
 	const history = useHistory();
 	const dispatch = useDispatch();
@@ -130,7 +136,11 @@ const AddProduct = () => {
 	const valid = () => {
 		return productName && description && size && color && price && stock && warehouse && category && image;
 	};
-
+	const getProduct = useSelector((state) => state.productAddReducer);
+	const productStatus = getProduct && getProduct.data && getProduct.data.status;
+	const isLoading = getProduct && getProduct.loading;
+	console.log(getProduct);
+	console.log(productStatus);
 	const photosChangeHandler = () => (event) => {
 		setImage();
 		let { files } = event.target;
@@ -139,12 +149,14 @@ const AddProduct = () => {
 	};
 	const readAndAddPreview = (file) => {
 		let reader = new FileReader();
-		reader.onloadend = () => {
-			console.log(reader);
-			setImage(reader && reader.result);
-			return reader && reader.result;
-		};
-		reader && reader.readAsDataURL(file);
+		if (file) {
+			reader.onloadend = () => {
+				console.log(reader);
+				setImage(reader && reader.result);
+				return reader && reader.result;
+			};
+			reader && reader.readAsDataURL(file);
+		}
 	};
 
 	const handleChange = (e) => {
@@ -185,15 +197,16 @@ const AddProduct = () => {
 	// }
 
 	const handleAction = (value) => {
-		console.log(value);
 		if (value === true) {
 			history.push('/add-product');
+
+			window.location.reload();
 		}
 	};
 	const handleBackAction = (value) => {
-		console.log(value);
 		if (value === true) {
 			history.push('/');
+			window.location.reload();
 		}
 	};
 
@@ -271,6 +284,7 @@ const AddProduct = () => {
 			<TextField
 				style={{ marginTop: 12 }}
 				label="Stock Availability"
+				type="number"
 				variant="outlined"
 				value={stock}
 				onChange={handleStockChange}
@@ -293,15 +307,20 @@ const AddProduct = () => {
 				</Select>
 			</FormControl>
 			<ButtonStyled valid={!valid() ? 1 : 0} fullWidth onClick={handleAdd}>
+				{isLoading === true ? (
+					<ProgressContainer>
+						<CircularProgress size={15} color={'inherit'} />
+					</ProgressContainer>
+				) : null}
 				ADD PRODUCT
 			</ButtonStyled>
 			<BackButtonStyled fullWidth onClick={handleBack} color="primary">
 				Back
 			</BackButtonStyled>
-			{openAlertBox ? (
+			{openAlertBox && productStatus ? (
 				<AlertBox
 					agreeText={'Add New'}
-					closeText={'Back'}
+					closeText={'OK'}
 					title={`Prodcut Name: ${productName}`}
 					description={'has been created successfully'}
 					trigger={true}

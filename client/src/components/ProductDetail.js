@@ -86,10 +86,20 @@ const RadioContainer = styled(RadioGroup)`
 		flex-direction: column;
 	}
 `;
-
+const ButtonStyled = styled(Button)`
+	border-radius: 10px !important ;
+	background-color: #1da0ff !important;
+	color: black !important;
+	height: 48px !important;
+	margin-top: 25px !important;
+	align-items: center !important;
+	&:hover {
+		opacity: 3;
+		color: white;
+	}
+`;
 const BackButtonStyled = styled(Button)`
 	border-radius: 10px !important ;
-	background-color: #99e91b !important;
 	color: black !important;
 	height: 48px !important;
 	margin-top: 25px !important;
@@ -135,6 +145,9 @@ const EditProduct = (props) => {
 	}, [getProduct]);
 
 	const handleBack = () => history.push('/');
+	const handleEdit = () => {
+		history.push(`/edit-product/${id}`);
+	};
 	return (
 		<InputContainer>
 			<HeaderContainer>
@@ -196,6 +209,7 @@ const EditProduct = (props) => {
 				style={{ marginTop: 12 }}
 				label="Stock Availability"
 				variant="outlined"
+				type="number"
 				value={stock}
 				disabled
 				fullWidth
@@ -216,7 +230,9 @@ const EditProduct = (props) => {
 					<MenuItem value={2}>Woman</MenuItem>
 				</Select>
 			</FormControlStyled>
-
+			<ButtonStyled fullWidth onClick={handleEdit}>
+				Edit
+			</ButtonStyled>
 			<BackButtonStyled fullWidth onClick={handleBack}>
 				Back
 			</BackButtonStyled>
