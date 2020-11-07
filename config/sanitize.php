@@ -37,6 +37,4 @@ function html_decode($str){
     return $str;
 }
 
-
-
 ?>

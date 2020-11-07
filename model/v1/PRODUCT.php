@@ -61,6 +61,7 @@ class PRODUCT {
         foreach ($products AS $index => $product) {
             $product->id = encrypt($product->id);
             $product->name = html_decode($product->name);
+            $product->description = html_decode($product->description);
             $return_data[] = $product;
         }
         return_success($total_product_count, $return_data);
@@ -72,6 +73,8 @@ class PRODUCT {
         $product = R::load('product', $id);
         if ($product->id == 0) return_fail("product->detail : no data for requested id ".$encrypt_id);
         $product->id = encrypt($product->id);
+        $product->name = html_decode($product->name);
+        $product->description = html_decode($product->description);
         return_success("product->detail ", $product);
     }
 
@@ -95,6 +98,7 @@ class PRODUCT {
             R::store($product);
             $product->id = encrypt($product->id);
             $product->name = html_decode($product->name);
+            $product->description = html_decode($product->description);
             return_success("product->update", $product);
         }
         catch(Exception $exp) {
@@ -110,6 +114,8 @@ class PRODUCT {
         try {
             R::trash($product);
             $product->id = encrypt($product->id);
+            $product->name = html_decode($product->name);
+            $product->description = html_decode($product->description);
             return_success("product->delete", $product);
         }
         catch(Exception $exp) {
