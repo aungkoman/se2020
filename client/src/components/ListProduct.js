@@ -97,6 +97,7 @@ const ListProduct = (props) => {
 				setTimeout(() => {
 					dispatch(productList());
 				}, 1000);
+				history.push(`/`);
 			}
 
 			// To Delete Multiple Product
@@ -149,7 +150,7 @@ const ListProduct = (props) => {
 		productData && productData.length > 9
 			? Math.floor(parseInt(listProduct && listProduct.product && listProduct.product.msg + 1) / 10)
 			: 0;
-
+	console.log(PaginationCount);
 	// Handle Paginate onClick
 	const handlePaginate = (page) => {
 		setPage(page);
@@ -322,7 +323,28 @@ const ListProduct = (props) => {
 					/>
 				</PaginationWrapper>
 			) : null}
-
+			{isEmpty(productData) &&
+			listProduct &&
+			listProduct.product &&
+			listProduct.product.msg >= 10 &&
+			parseInt(page) > 1 ? (
+				<PaginationWrapper>
+					<Pagination
+						page={parseInt(page)}
+						variant="outlined"
+						color="primary"
+						count={PaginationCount + 1}
+						onChange={(e, page) => handlePaginate(page)}
+						renderItem={(item) => (
+							<PaginationItem
+								component={Link}
+								to={`/${item.page === 1 ? '' : `?p=${item.page}`}`}
+								{...item}
+							/>
+						)}
+					/>
+				</PaginationWrapper>
+			) : null}
 			{imageClick ? (
 				<ImageModal image={getImageOnClick} openModal={imageClick} closeModal={setImageClick} />
 			) : null}
