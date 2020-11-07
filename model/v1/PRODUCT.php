@@ -60,6 +60,7 @@ class PRODUCT {
         $return_data = array();
         foreach ($products AS $index => $product) {
             $product->id = encrypt($product->id);
+            $product->name = html_decode($product->name);
             $return_data[] = $product;
         }
         return_success($total_product_count, $return_data);
@@ -93,6 +94,7 @@ class PRODUCT {
         try {
             R::store($product);
             $product->id = encrypt($product->id);
+            $product->name = html_decode($product->name);
             return_success("product->update", $product);
         }
         catch(Exception $exp) {

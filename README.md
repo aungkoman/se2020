@@ -1,5 +1,5 @@
 # Product Module for SE2020
-Developed by Team Two Guy.
+Developed by Team Two Guys.
 
 ### Backend Server Deployment Note
 Project Source Code

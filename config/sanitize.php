@@ -1,6 +1,8 @@
 <?php
 // text santitize
 function sanitize_str($data,$msg = "message"){
+    $data = htmlentities($data,ENT_QUOTES);
+    // $data = base64_encode($data);
     $data = filter_var($data, FILTER_SANITIZE_STRING);
     if($data == "" ) return_fail("bad string!",$msg);
     return $data;
@@ -24,6 +26,15 @@ function sanitize_float($data,$msg = "message"){
         1. real sanitize float
     */
     return $data;
+}
+
+function html_decode($str){
+    // return $str;
+    $str =  html_entity_decode($str);
+    //$str = quoted_printable_decode ( $str ) ;
+
+    // $str = base64_decode($str);
+    return $str;
 }
 
 
