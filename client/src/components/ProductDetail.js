@@ -148,96 +148,108 @@ const EditProduct = (props) => {
 	const handleEdit = () => {
 		history.push(`/edit-product/${id}`);
 	};
-	return (
-		<InputContainer>
-			<HeaderContainer>
-				<ImageContainer style={{ border: 'black' }}>
-					<label htmlFor="upload-button">
-						{/* {image ? (
-								<Image src={image} />
-							) : (
-								<h4 style={{ textAlign: 'center' }}>Click Here to add Image</h4>
-							)} */}
-						<Image src={image} />
-					</label>
-				</ImageContainer>
-				<HeadTextAreaContainer>
-					<TextBox label="Product Name" variant="outlined" value={productName} disabled fullWidth />
-					<TextBox
-						label="Product Description"
-						variant="outlined"
-						value={description}
-						style={{ marginTop: 10 }}
-						multiline
-						rows={5}
-						disabled
-						fullWidth
-					/>
-				</HeadTextAreaContainer>
-			</HeaderContainer>
+	if (
+		getProduct &&
+		getProduct.loading === false &&
+		getProduct &&
+		getProduct.product &&
+		getProduct.product.status === false
+	) {
+		return (
+			<InputContainer>
+				<h4 style={{ textAlign: 'center' }}>Product Doesn't exist</h4>
+				<BackButtonStyled fullWidth onClick={handleBack}>
+					Back
+				</BackButtonStyled>
+			</InputContainer>
+		);
+	} else {
+		return (
+			<InputContainer>
+				<HeaderContainer>
+					<ImageContainer style={{ border: 'black' }}>
+						<label htmlFor="upload-button">
+							<Image src={image} />
+						</label>
+					</ImageContainer>
+					<HeadTextAreaContainer>
+						<TextBox label="Product Name" variant="outlined" value={productName} disabled fullWidth />
+						<TextBox
+							label="Product Description"
+							variant="outlined"
+							value={description}
+							style={{ marginTop: 10 }}
+							multiline
+							rows={5}
+							disabled
+							fullWidth
+						/>
+					</HeadTextAreaContainer>
+				</HeaderContainer>
 
-			<RadioContainer aria-label="size" name="size" value={size}>
-				<FormControlLabelStyled value="1" control={<Radio disabled />} label="Free Size" />
-				<FormControlLabelStyled value="2" control={<Radio disabled />} label="S Size" />
-				<FormControlLabelStyled value="3" control={<Radio disabled />} label="M Size" />
-				<FormControlLabelStyled value="4" control={<Radio disabled />} label="L Size" />
-				<FormControlLabelStyled value="5" control={<Radio disabled />} label="XL Size" />
-			</RadioContainer>
+				<RadioContainer aria-label="size" name="size" value={size}>
+					<FormControlLabelStyled value="1" control={<Radio disabled />} label="Free Size" />
+					<FormControlLabelStyled value="2" control={<Radio disabled />} label="S Size" />
+					<FormControlLabelStyled value="3" control={<Radio disabled />} label="M Size" />
+					<FormControlLabelStyled value="4" control={<Radio disabled />} label="L Size" />
+					<FormControlLabelStyled value="5" control={<Radio disabled />} label="XL Size" />
+				</RadioContainer>
 
-			<FormControlStyled style={{ marginTop: 12 }} variant="outlined" fullWidth>
-				<InputLabel>Color</InputLabel>
-				<Select labelId="color-select" label="Color" disabled value={color}>
-					<MenuItem value={1}>Black</MenuItem>
-					<MenuItem value={2}>Green</MenuItem>
-					<MenuItem value={3}>Yellow</MenuItem>
-					<MenuItem value={4}>White</MenuItem>
-					<MenuItem value={5}>Grey</MenuItem>
-					<MenuItem value={6}>Red</MenuItem>
-				</Select>
-			</FormControlStyled>
+				<FormControlStyled style={{ marginTop: 12 }} variant="outlined" fullWidth>
+					<InputLabel>Color</InputLabel>
+					<Select labelId="color-select" label="Color" disabled value={color}>
+						<MenuItem value={1}>Black</MenuItem>
+						<MenuItem value={2}>Green</MenuItem>
+						<MenuItem value={3}>Yellow</MenuItem>
+						<MenuItem value={4}>White</MenuItem>
+						<MenuItem value={5}>Grey</MenuItem>
+						<MenuItem value={6}>Red</MenuItem>
+					</Select>
+				</FormControlStyled>
 
-			<TextBox
-				style={{ marginTop: 12 }}
-				label="Price"
-				variant="outlined"
-				type="number"
-				value={price}
-				disabled
-				fullWidth
-			/>
-			<TextBox
-				style={{ marginTop: 12 }}
-				label="Stock Availability"
-				variant="outlined"
-				type="number"
-				value={stock}
-				disabled
-				fullWidth
-			/>
+				<TextBox
+					style={{ marginTop: 12 }}
+					label="Price"
+					variant="outlined"
+					type="number"
+					value={price}
+					disabled
+					fullWidth
+				/>
+				<TextBox
+					style={{ marginTop: 12 }}
+					label="Stock Availability"
+					variant="outlined"
+					type="number"
+					value={stock}
+					disabled
+					fullWidth
+				/>
 
-			<FormControlStyled style={{ marginTop: 12 }} variant="outlined" fullWidth>
-				<InputLabel>Warehouse</InputLabel>
-				<Select labelId="color-select" label="Warehouse" value={warehouse} disabled>
-					<MenuItem value={1}>A</MenuItem>
-					<MenuItem value={2}>B</MenuItem>
-					<MenuItem value={3}>C</MenuItem>
-				</Select>
-			</FormControlStyled>
-			<FormControlStyled style={{ marginTop: 12 }} variant="outlined" fullWidth>
-				<InputLabel>Category</InputLabel>
-				<Select labelId="color-select" label="Category" value={category} disabled>
-					<MenuItem value={1}>Man</MenuItem>
-					<MenuItem value={2}>Woman</MenuItem>
-				</Select>
-			</FormControlStyled>
-			<ButtonStyled fullWidth onClick={handleEdit}>
-				Edit
-			</ButtonStyled>
-			<BackButtonStyled fullWidth onClick={handleBack}>
-				Back
-			</BackButtonStyled>
-		</InputContainer>
-	);
+				<FormControlStyled style={{ marginTop: 12 }} variant="outlined" fullWidth>
+					<InputLabel>Warehouse</InputLabel>
+					<Select labelId="color-select" label="Warehouse" value={warehouse} disabled>
+						<MenuItem value={1}>A</MenuItem>
+						<MenuItem value={2}>B</MenuItem>
+						<MenuItem value={3}>C</MenuItem>
+					</Select>
+				</FormControlStyled>
+				<FormControlStyled style={{ marginTop: 12 }} variant="outlined" fullWidth>
+					<InputLabel>Category</InputLabel>
+					<Select labelId="color-select" label="Category" value={category} disabled>
+						<MenuItem value={1}>Man</MenuItem>
+						<MenuItem value={2}>Woman</MenuItem>
+					</Select>
+				</FormControlStyled>
+				<ButtonStyled fullWidth onClick={handleEdit}>
+					Edit
+				</ButtonStyled>
+				<BackButtonStyled fullWidth onClick={handleBack}>
+					Back
+				</BackButtonStyled>
+			</InputContainer>
+		);
+	}
 };
 
 export default EditProduct;

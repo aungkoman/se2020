@@ -146,26 +146,32 @@ const AddProduct = () => {
 	const [imageValid, setImageValid] = useState(false);
 	const [file, setFile] = useState();
 	const [openAlertBox, setOpenAlerBox] = useState(false);
+	const [fileValid, setFileValid] = useState(false);
 	const valid = () => {
 		return productName && description && size && color && price && stock && warehouse && category && image;
 	};
 	const getProduct = useSelector((state) => state.productAddReducer);
-	console.log(getProduct);
+
 	const productStatus = getProduct && getProduct.data && getProduct.data.status;
 	const isLoading = getProduct && getProduct.loading;
-	console.log(getProduct);
-	console.log(productStatus);
+
 	const photosChangeHandler = () => (event) => {
 		setImage();
-		let { files } = event.target;
-		readAndAddPreview(files[0]);
-		setFile(files[0]);
+		const { files } = event.target;
+		if (files && !files[0].name.match(/\.(jpg|jpeg|png|gif)$/)) {
+			setImageValid(true);
+			setFileValid(true);
+		} else {
+			readAndAddPreview(files[0]);
+			setFile(files[0]);
+			setFileValid(false);
+			setImageValid(false);
+		}
 	};
 	const readAndAddPreview = (file) => {
 		let reader = new FileReader();
 		if (file) {
 			reader.onloadend = () => {
-				console.log(reader);
 				setImage(reader && reader.result);
 				setImageValid(false);
 				return reader && reader.result;
@@ -174,6 +180,7 @@ const AddProduct = () => {
 		}
 	};
 
+	// OnChange Handler for the Product Fields
 	const handleChange = (e) => {
 		setProductName(e.target.value);
 		setProductNameValid(false);
@@ -218,7 +225,6 @@ const AddProduct = () => {
 		}
 		if (isEmpty(size)) {
 			setSizeValid(true);
-			console.log('21');
 		}
 		if (color === '') {
 			setColorValid(true);
@@ -252,6 +258,12 @@ const AddProduct = () => {
 			history.push('/add-product');
 
 			window.location.reload();
+		}
+	};
+	const handleFileValidAction = (value) => {
+		// setAgree(value);
+		if (value === true) {
+			setFileValid(false);
 		}
 	};
 	const handleBackAction = (value) => {
@@ -397,7 +409,15 @@ const AddProduct = () => {
 					handleBackAction={handleBackAction}
 				/>
 			) : null}
-
+			{fileValid === true ? (
+				<AlertBox
+					agreeText={'OK'}
+					title={`Please select valid image`}
+					description={'File Must Be PNG or JPG'}
+					trigger={true}
+					handleAction={handleFileValidAction}
+				/>
+			) : null}
 			{productStatus === false ? (
 				<AlertBox
 					agreeText={'OK'}

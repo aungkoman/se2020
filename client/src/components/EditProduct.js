@@ -19,6 +19,7 @@ import { productDetail } from '../redux/action/productDetail';
 import { useHistory, useParams } from 'react-router-dom';
 import { BASE_URL } from '../utils/baseURL';
 import AlertBox from './AlertBox';
+import { isEmpty } from 'lodash';
 const InputContainer = styled.div`
 	margin-top: 5px;
 	padding: 20px 20px;
@@ -103,6 +104,7 @@ const TouchableOpacity = styled.div`
 	justify-content: center;
 	width: 100% !important;
 	height: 100% !important;
+	border-color: ${({ valid }) => valid && `red !important`};
 	cursor: pointer;
 	border-style: solid;
 	border-width: 1px;
@@ -131,6 +133,8 @@ const EditProduct = (props) => {
 	const [img, setImg] = useState();
 	const [file, setFile] = useState();
 	const [openAlertBox, setOpenAlerBox] = useState(false);
+	const [imageValid, setImageValid] = useState(false);
+	const [fileValid, setFileValid] = useState(false);
 	const valid = () => {
 		return productName && description && size && color && price && stock && warehouse && category && (img || image);
 	};
@@ -138,13 +142,13 @@ const EditProduct = (props) => {
 	const getEditedProduct = useSelector((state) => state.productEditReducer);
 	const isLoading = getEditedProduct && getEditedProduct.loading;
 	const editedProductStatus = getEditedProduct && getEditedProduct.data && getEditedProduct.data.status;
+	const productStatus = getProduct && getProduct.data && getProduct.data.status;
 	useEffect(() => {
 		dispatch(productDetail({ id }));
 	}, []);
-	console.log(description);
+	console.log(getProduct);
 	useEffect(() => {
 		const data = getProduct && getProduct.product && getProduct.product.data;
-		console.log(data);
 		const img = `${BASE_URL}${data && data.image}`;
 		setProductName(data && data.name);
 		setDescription(data && data.description);
@@ -160,8 +164,15 @@ const EditProduct = (props) => {
 	const photosChangeHandler = () => (event) => {
 		setImage();
 		let { files } = event.target;
-		readAndAddPreview(files[0]);
-		setFile(files[0]);
+		if (files && !files[0].name.match(/\.(jpg|jpeg|png|gif)$/)) {
+			setImageValid(true);
+			setFileValid(true);
+		} else {
+			readAndAddPreview(files[0]);
+			setFile(files[0]);
+			setImageValid(false);
+			setFileValid(false);
+		}
 	};
 	const readAndAddPreview = (file) => {
 		let reader = new FileReader();
@@ -209,141 +220,185 @@ const EditProduct = (props) => {
 		setOpenAlerBox(true);
 	};
 	const handleAction = (value) => {
-		console.log(value);
-
 		// setAgree(value);
 		if (value === true) {
 			history.push('/');
 		}
 	};
+	const handleFileValidAction = (value) => {
+		// setAgree(value);
+		if (value === true) {
+			setFileValid(false);
+		}
+	};
 
 	const handleBack = () => history.push('/');
-	return (
-		<InputContainer>
-			<HeaderContainer>
-				<ImageContainer style={{ border: 'black' }}>
-					<label htmlFor="upload-button">
-						<TouchableOpacity>
-							{/* {image ? (
-								<Image src={image} />
-							) : (
-								<h4 style={{ textAlign: 'center' }}>Click Here to add Image</h4>
-							)} */}
-							{image || img ? (
-								<Image src={image ? image : img} loading="lazy" alt={productName} />
-							) : (
-								<h5>ADD PHOTO</h5>
-							)}
-						</TouchableOpacity>
-					</label>
+	if (
+		getProduct &&
+		getProduct.loading === false &&
+		getProduct &&
+		getProduct.product &&
+		getProduct.product.status === false
+	) {
+		return (
+			<InputContainer>
+				<h4 style={{ textAlign: 'center' }}>Product Doesn't exist</h4>
+				<BackButtonStyled fullWidth onClick={handleBack}>
+					Back
+				</BackButtonStyled>
+			</InputContainer>
+		);
+	} else {
+		return (
+			<InputContainer>
+				<HeaderContainer>
+					<ImageContainer style={{ border: 'black' }}>
+						<label htmlFor="upload-button">
+							<TouchableOpacity valid={imageValid ? 1 : 0}>
+								{image || img ? (
+									<Image src={image ? image : img} loading="lazy" alt={productName} />
+								) : (
+									<h5>ADD PHOTO</h5>
+								)}
+							</TouchableOpacity>
+						</label>
 
-					<input
-						style={{ display: 'none' }}
-						accept="image/*"
-						id="upload-button"
-						type="file"
-						onChange={photosChangeHandler()}
-					/>
-				</ImageContainer>
-				<HeadTextAreaContainer>
-					<TextField
-						label="Product Name"
-						variant="outlined"
-						value={productName}
-						onChange={handleChange}
-						fullWidth
-					/>
-					<TextField
-						label="Product Description"
-						variant="outlined"
-						value={description}
-						style={{ marginTop: 10 }}
-						multiline
-						rows={5}
-						onChange={handleDescriptionChange}
-						fullWidth
-					/>
-				</HeadTextAreaContainer>
-			</HeaderContainer>
+						<input
+							style={{ display: 'none' }}
+							accept="image/*"
+							id="upload-button"
+							type="file"
+							onChange={photosChangeHandler()}
+						/>
+					</ImageContainer>
+					<HeadTextAreaContainer>
+						<TextField
+							label="Product Name"
+							variant="outlined"
+							value={productName}
+							onChange={handleChange}
+							fullWidth
+						/>
+						<TextField
+							label="Product Description"
+							variant="outlined"
+							value={description}
+							style={{ marginTop: 10 }}
+							multiline
+							rows={5}
+							onChange={handleDescriptionChange}
+							fullWidth
+						/>
+					</HeadTextAreaContainer>
+				</HeaderContainer>
 
-			<RadioContainer aria-label="size" name="size" onChange={handleSizeChange} value={size}>
-				<FormLabel style={{ color: 'black' }}>Size : </FormLabel>
-				<FormControlLabel value="1" control={<Radio />} label="F" />
-				<FormControlLabel value="2" control={<Radio />} label="S" />
-				<FormControlLabel value="3" control={<Radio />} label="M" />
-				<FormControlLabel value="4" control={<Radio />} label="L" />
-				<FormControlLabel value="5" control={<Radio />} label="XL" />
-				<FormControlLabel value="6" control={<Radio />} label="XXL" />
-			</RadioContainer>
+				<RadioContainer aria-label="size" name="size" onChange={handleSizeChange} value={size}>
+					<FormLabel style={{ color: 'black' }}>Size : </FormLabel>
+					<FormControlLabel value="1" control={<Radio />} label="F" />
+					<FormControlLabel value="2" control={<Radio />} label="S" />
+					<FormControlLabel value="3" control={<Radio />} label="M" />
+					<FormControlLabel value="4" control={<Radio />} label="L" />
+					<FormControlLabel value="5" control={<Radio />} label="XL" />
+					<FormControlLabel value="6" control={<Radio />} label="XXL" />
+				</RadioContainer>
 
-			<FormControl style={{ marginTop: 12 }} variant="outlined" fullWidth>
-				<InputLabel>Color</InputLabel>
-				<Select labelId="color-select" label="Color" onChange={handleColorChange} value={color}>
-					<MenuItem value={1}>Black</MenuItem>
-					<MenuItem value={2}>Green</MenuItem>
-					<MenuItem value={3}>Yellow</MenuItem>
-					<MenuItem value={4}>White</MenuItem>
-					<MenuItem value={5}>Grey</MenuItem>
-					<MenuItem value={6}>Red</MenuItem>
-				</Select>
-			</FormControl>
+				<FormControl style={{ marginTop: 12 }} variant="outlined" fullWidth>
+					<InputLabel>Color</InputLabel>
+					<Select labelId="color-select" label="Color" onChange={handleColorChange} value={color}>
+						<MenuItem value={1}>Black</MenuItem>
+						<MenuItem value={2}>Green</MenuItem>
+						<MenuItem value={3}>Yellow</MenuItem>
+						<MenuItem value={4}>White</MenuItem>
+						<MenuItem value={5}>Grey</MenuItem>
+						<MenuItem value={6}>Red</MenuItem>
+					</Select>
+				</FormControl>
 
-			<TextField
-				style={{ marginTop: 12 }}
-				label="Price"
-				variant="outlined"
-				type="number"
-				value={price}
-				onChange={handlePriceChange}
-				fullWidth
-			/>
-			<TextField
-				style={{ marginTop: 12 }}
-				label="Stock Availability"
-				variant="outlined"
-				type="number"
-				value={stock}
-				onChange={handleStockChange}
-				fullWidth
-			/>
-
-			<FormControl style={{ marginTop: 12 }} variant="outlined" fullWidth>
-				<InputLabel>Warehouse</InputLabel>
-				<Select labelId="color-select" label="Warehouse" value={warehouse} onChange={handleWarehouseChange}>
-					<MenuItem value={1}>A</MenuItem>
-					<MenuItem value={2}>B</MenuItem>
-					<MenuItem value={3}>C</MenuItem>
-				</Select>
-			</FormControl>
-			<FormControl style={{ marginTop: 12 }} variant="outlined" fullWidth>
-				<InputLabel>Category</InputLabel>
-				<Select labelId="color-select" label="Category" value={category} onChange={handleCategoryChange}>
-					<MenuItem value={1}>Man</MenuItem>
-					<MenuItem value={2}>Woman</MenuItem>
-				</Select>
-			</FormControl>
-			<ButtonStyled valid={!valid() ? 1 : 0} fullWidth onClick={handleAdd}>
-				{isLoading === true ? (
-					<ProgressContainer>
-						<CircularProgress size={15} color={'inherit'} />
-					</ProgressContainer>
-				) : null}
-				Update PRODUCT
-			</ButtonStyled>
-			<BackButtonStyled fullWidth onClick={handleBack}>
-				Back
-			</BackButtonStyled>
-			{editedProductStatus && openAlertBox ? (
-				<AlertBox
-					agreeText={'OK'}
-					title={`Prodcut Name: ${productName}`}
-					description={'has been updated'}
-					trigger={true}
-					handleAction={handleAction}
+				<TextField
+					style={{ marginTop: 12 }}
+					label="Price"
+					variant="outlined"
+					type="number"
+					value={price}
+					onChange={handlePriceChange}
+					fullWidth
 				/>
-			) : null}
-		</InputContainer>
-	);
+				<TextField
+					style={{ marginTop: 12 }}
+					label="Stock Availability"
+					variant="outlined"
+					type="number"
+					value={stock}
+					onChange={handleStockChange}
+					fullWidth
+				/>
+
+				<FormControl style={{ marginTop: 12 }} variant="outlined" fullWidth>
+					<InputLabel>Warehouse</InputLabel>
+					<Select labelId="color-select" label="Warehouse" value={warehouse} onChange={handleWarehouseChange}>
+						<MenuItem value={1}>A</MenuItem>
+						<MenuItem value={2}>B</MenuItem>
+						<MenuItem value={3}>C</MenuItem>
+					</Select>
+				</FormControl>
+				<FormControl style={{ marginTop: 12 }} variant="outlined" fullWidth>
+					<InputLabel>Category</InputLabel>
+					<Select labelId="color-select" label="Category" value={category} onChange={handleCategoryChange}>
+						<MenuItem value={1}>Man</MenuItem>
+						<MenuItem value={2}>Woman</MenuItem>
+					</Select>
+				</FormControl>
+				<ButtonStyled valid={!valid() ? 1 : 0} fullWidth onClick={handleAdd}>
+					{isLoading === true ? (
+						<ProgressContainer>
+							<CircularProgress size={15} color={'inherit'} />
+						</ProgressContainer>
+					) : null}
+					Update PRODUCT
+				</ButtonStyled>
+				<BackButtonStyled fullWidth onClick={handleBack}>
+					Back
+				</BackButtonStyled>
+				{editedProductStatus && openAlertBox ? (
+					<AlertBox
+						agreeText={'OK'}
+						title={`Prodcut Name: ${productName}`}
+						description={'has been updated'}
+						trigger={true}
+						handleAction={handleAction}
+					/>
+				) : null}
+				{fileValid === true ? (
+					<AlertBox
+						agreeText={'OK'}
+						title={`Please select valid image`}
+						description={'File Must Be PNG or JPG'}
+						trigger={true}
+						handleAction={handleFileValidAction}
+					/>
+				) : null}
+				{productStatus === false ? (
+					<AlertBox
+						agreeText={'OK'}
+						title={`Error!!!`}
+						description={'Something is wrong !!! Pls Try Again '}
+						trigger={true}
+						handleAction={handleAction}
+					/>
+				) : null}
+
+				{getProduct && !isEmpty(getProduct.error) ? (
+					<AlertBox
+						agreeText={'OK'}
+						title={`Error!!!`}
+						description={'Network Error !!! Pls Try Again '}
+						trigger={true}
+						handleAction={handleAction}
+					/>
+				) : null}
+			</InputContainer>
+		);
+	}
 };
 
 export default EditProduct;
