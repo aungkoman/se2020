@@ -26,6 +26,8 @@ class PRODUCT {
         
         try {
             $id = R::store($this->product);
+            $this->product->id_encrypted = encrypt($id);
+            R::store($this->product);
             $this->product->id = encrypt($this->product->id);
             return_success("product->insert", $this->product);
         }
