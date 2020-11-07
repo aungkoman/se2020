@@ -128,6 +128,8 @@ const EditProduct = (props) => {
 	useEffect(() => {
 		dispatch(productDetail({ id }));
 	}, []);
+
+	// Get Product Data and set to the form
 	useEffect(() => {
 		const data = getProduct && getProduct.product && getProduct.product.data;
 		const img = `${BASE_URL}${data && data.image}`;
@@ -141,7 +143,6 @@ const EditProduct = (props) => {
 		setWarehouse(data && data.warehouse);
 		setCategory(data && data.category);
 		setImage(img);
-		console.log(data && data.image);
 	}, [getProduct]);
 
 	const handleBack = () => history.push('/');

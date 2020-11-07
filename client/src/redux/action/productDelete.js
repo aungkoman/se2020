@@ -32,7 +32,6 @@ export const productDelete = ({ id }) => {
 		dispatch(productDeleteStart());
 		try {
 			const res = await axios.post('/api/v1/product/', data);
-			console.log(res);
 			if (res && res.data) {
 				dispatch(productDeleteSuccess(res.data));
 			} else {
@@ -49,10 +48,8 @@ export const productDelete = ({ id }) => {
 };
 
 export const productDeleteMultiple = ({ multiIds }) => {
-	console.log(multiIds);
 	const token = getCookie('token');
 	var ids = JSON.stringify(multiIds);
-	console.log(ids);
 	let data = new FormData();
 	// const data = qs.stringify({
 	// 	ops_type: 'delete_multiple',
@@ -62,7 +59,6 @@ export const productDeleteMultiple = ({ multiIds }) => {
 	data.append('ops_type', 'delete_multiple');
 	data.append('ids', ids);
 	data.append('jwt', token);
-	console.log(data);
 	// Return promise with success and failure actions
 	return async (dispatch) => {
 		dispatch(productDeleteStart());

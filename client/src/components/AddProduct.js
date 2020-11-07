@@ -153,8 +153,11 @@ const AddProduct = () => {
 	const getProduct = useSelector((state) => state.productAddReducer);
 
 	const productStatus = getProduct && getProduct.data && getProduct.data.status;
+	//For Error Message
+	const productStatusMsg = getProduct && getProduct.data && getProduct.data.msg;
 	const isLoading = getProduct && getProduct.loading;
 
+	// Get Image from Input
 	const photosChangeHandler = () => (event) => {
 		setImage();
 		const { files } = event.target;
@@ -168,6 +171,7 @@ const AddProduct = () => {
 			setImageValid(false);
 		}
 	};
+	// After get image convert base64 and preview
 	const readAndAddPreview = (file) => {
 		let reader = new FileReader();
 		if (file) {
@@ -418,11 +422,12 @@ const AddProduct = () => {
 					handleAction={handleFileValidAction}
 				/>
 			) : null}
+
 			{productStatus === false ? (
 				<AlertBox
 					agreeText={'OK'}
 					title={`Error!!!`}
-					description={'Something is wrong !!! Pls Try Again '}
+					description={productStatusMsg}
 					trigger={true}
 					handleAction={handleAction}
 				/>

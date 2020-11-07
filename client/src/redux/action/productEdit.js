@@ -36,7 +36,6 @@ export const productEdit = ({ id, name, description, image, size, color, price, 
 		warehouse: warehouse,
 		category: category
 	});
-	console.log(data);
 	// Return promise with success and failure actions
 	return async (dispatch) => {
 		dispatch(productEditStart());

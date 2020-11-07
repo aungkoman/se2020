@@ -30,7 +30,6 @@ export const login = () => {
 		dispatch(loginStart());
 		try {
 			const res = await axios.post('/api/v1/product/', data);
-			console.log(res);
 			if (res && res.data) {
 				await setCookie('token', res.data && res.data.data && res.data.data.jwt);
 				await dispatch(loginSuccess(res.data));

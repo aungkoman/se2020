@@ -150,11 +150,9 @@ const ListProduct = (props) => {
 		productData && productData.length > 9
 			? Math.floor(parseInt(listProduct && listProduct.product && listProduct.product.msg + 1) / 10)
 			: 0;
-	console.log(PaginationCount);
 	// Handle Paginate onClick
 	const handlePaginate = (page) => {
 		setPage(page);
-		// console.log(value);
 		let limit = 10;
 		let last_id = page;
 		dispatch(productList(limit, last_id));

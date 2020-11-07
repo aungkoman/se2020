@@ -27,13 +27,11 @@ export const productDetail = ({ id }) => {
 		id: id,
 		jwt: token
 	});
-	console.log(data);
 	// Return promise with success and failure actions
 	return async (dispatch) => {
 		dispatch(productDetailStart());
 		try {
 			const res = await axios.post('/api/v1/product/', data);
-			console.log(res);
 			if (res && res.data) {
 				dispatch(productDetailSuccess(res.data));
 			} else {

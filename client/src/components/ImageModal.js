@@ -28,7 +28,6 @@ const Image = styled.img`
 `;
 const ImageModal = ({ openModal, image, closeModal }) => {
 	const [open, setOpen] = React.useState(true);
-	console.log(openModal);
 
 	useEffect(() => {
 		setOpen(openModal);

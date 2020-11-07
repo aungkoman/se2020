@@ -138,15 +138,20 @@ const EditProduct = (props) => {
 	const valid = () => {
 		return productName && description && size && color && price && stock && warehouse && category && (img || image);
 	};
+	//Get Product Detail
 	const getProduct = useSelector((state) => state.productDetailReducer);
+	// Get Edit Product after post
 	const getEditedProduct = useSelector((state) => state.productEditReducer);
 	const isLoading = getEditedProduct && getEditedProduct.loading;
 	const editedProductStatus = getEditedProduct && getEditedProduct.data && getEditedProduct.data.status;
+	const editedProductErrorMessage = getEditedProduct && getEditedProduct.data && getEditedProduct.data.msg;
 	const productStatus = getProduct && getProduct.data && getProduct.data.status;
+
+	// Get Data
 	useEffect(() => {
 		dispatch(productDetail({ id }));
 	}, []);
-	console.log(getProduct);
+
 	useEffect(() => {
 		const data = getProduct && getProduct.product && getProduct.product.data;
 		const img = `${BASE_URL}${data && data.image}`;
@@ -178,7 +183,6 @@ const EditProduct = (props) => {
 		let reader = new FileReader();
 		if (file) {
 			reader.onloadend = () => {
-				console.log(reader);
 				setImage(reader && reader.result);
 				return reader && reader.result;
 			};
@@ -375,6 +379,16 @@ const EditProduct = (props) => {
 						description={'File Must Be PNG or JPG'}
 						trigger={true}
 						handleAction={handleFileValidAction}
+					/>
+				) : null}
+
+				{editedProductStatus === false ? (
+					<AlertBox
+						agreeText={'OK'}
+						title={`Error!!!`}
+						description={editedProductErrorMessage}
+						trigger={true}
+						handleAction={handleAction}
 					/>
 				) : null}
 				{productStatus === false ? (
