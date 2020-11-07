@@ -18,7 +18,7 @@ Change PORT Name in .env if you want
 ## Run the development server:
 
 ```bash
-Change API URL in  /src/api/axiosCreate and  /src/utils/baseURL
+Change API URL in  /src/api/axiosCreate and   Change Upload Folder Path in /src/utils/baseURL
 ```
 
 ```bash
@@ -49,7 +49,7 @@ npm install
 ## Step 3
 
 ```bash
-Change API URL in  /src/api/axiosCreate and  /src/utils/baseURL
+Change API URL in  /src/api/axiosCreate and  Change Upload Folder Path in  /src/utils/baseURL
 ```
 
 ## Step 4
